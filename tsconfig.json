@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "target": "es2017",
+        "module": "commonjs",
+        "noEmitOnError": true,
+        "noFallthroughCasesInSwitch": true,
+        "noImplicitAny": true,
+        "noImplicitReturns": true,
+        // "noUnusedLocals": true,
+        // "noUnusedParameters": true,
+        "pretty": true,
+        "sourceMap": true,
+        // "sourceRoot": "src",
+        "strictNullChecks": true
+    },
+    "include": [
+        "src/**/*"
+    ]
+}
