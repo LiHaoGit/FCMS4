@@ -49,3 +49,48 @@ export function typedJSONToJsObject(typedObject: any): any | null {
         return value
     }
 }
+
+export function stringToInt(s: string, alternative?: number) {
+    const num = _.toInteger(s)
+    if (num || num === 0) return num
+    return alternative
+}
+
+export function stringToFloat(s: string, alternative?: number) {
+    "use strict"
+    const num = _.toNumber(s)
+    if (num || num === 0) return num
+    return alternative
+}
+
+export function trimString(s?: string | null) {
+    if (!s) return s
+    return s.replace(/(^\s*)|(\s*$)/g, "")
+}
+
+export function longToDate(long: number) {
+    if (!long) return long
+    if (_.isDate(long)) return long
+    return new Date(long)
+}
+
+export function dateToLong(date?: Date | null) {
+    if (!date) return date
+    return date.getTime()
+}
+
+/**
+ * 字符串 "false" 转换为 false，"true" 转换为 true，null 原样返回，其余返回 undefined
+ */
+export function stringToBoolean(value: string) {
+    if (_.isBoolean(value))
+        return value
+    else if (value === "false")
+        return false
+    else if (value === "true")
+        return true
+    else if (_.isNull(value))
+        return null
+    else
+        return undefined
+}
