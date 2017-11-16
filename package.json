@@ -3,6 +3,7 @@
     "bluebird": "^3.5.1",
     "bunyan": "^1.8.12",
     "lodash": "^4.17.4",
+    "mkdirp": "^0.5.1",
     "mongodb": "^2.2.33",
     "redis": "^2.8.0"
   },
@@ -10,6 +11,7 @@
     "@types/bluebird": "^3.5.18",
     "@types/bunyan": "^1.8.3",
     "@types/lodash": "^4.14.84",
+    "@types/mkdirp": "^0.5.1",
     "@types/mongodb": "^2.2.15",
     "@types/redis": "^2.8.1",
     "gulp": "^3.9.1",

@@ -6,7 +6,7 @@ import * as mongodb from "mongodb"
 import { getLogger } from "./Log"
 import { getMainStore, stringToObjectIdSilently } from "./storage/MongoStore"
 import { aPublish, subscribe } from "./storage/RedisStore"
-import SystemMeta from "./SystemMeta"
+import { initSystemMeta, SystemEntities } from "./SystemMeta"
 import { dateToLong, longToDate, stringToBoolean, stringToFloat,
     stringToInt } from "./Util"
 
@@ -72,7 +72,7 @@ export async function aLoad(extraEntities: {[k: string]: EntityMeta}) {
         await aLoad({})
     })
 
-    SystemMeta.init(extraEntities)
+    initSystemMeta(extraEntities)
 
     const db = await getMainStore().aDatabase()
 
@@ -83,7 +83,7 @@ export async function aLoad(extraEntities: {[k: string]: EntityMeta}) {
     entities = {}
     for (const e of entitiesList) entities[e.name] = e
 
-    Object.assign(entities, SystemMeta.SystemEntities)
+    Object.assign(entities, SystemEntities)
 
     systemLogger.info("Meta loaded")
 }

@@ -84,7 +84,7 @@
         "typeof-compare": true,
         "use-default-type-parameter": true,
         "use-isnan": true,
-        "cyclomatic-complexity": [true, 20],
+        "cyclomatic-complexity": [true, 30],
         "eofline": true,
         "indent": [true, "spaces", 4],
         "max-line-length": [true, 80],
