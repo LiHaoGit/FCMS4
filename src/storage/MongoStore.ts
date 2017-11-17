@@ -127,7 +127,7 @@ export function stringArrayToObjectIdArraySilently(
 }
 
 // 将通用查询转转换为 mongo 的查询对象
-export function toMongoCriteria(criteria: AnyCriteria) {
+export function toMongoCriteria(criteria: AnyCriteria): MongoCriteria {
     if (!criteria) return {}
 
     const __type = criteria.__type
@@ -152,15 +152,19 @@ function convertMongoCriteria(criteria: GenericCriteria,
 
     if (criteria.relation === CriteriaRelation.OR) {
         const items = []
-        for (const item of criteria.items) {
-            const mc = {}
-            convertMongoCriteria(item, mc)
-            if (mc) items.push(mc)
+        if (criteria.items) {
+            for (const item of criteria.items) {
+                const mc = {}
+                convertMongoCriteria(item, mc)
+                if (mc) items.push(mc)
+            }
         }
         mongoCriteria.$or = items
     } else if (criteria.relation === CriteriaRelation.AND) {
-        for (const item of criteria.items)
-        convertMongoCriteria(item, mongoCriteria)
+        if (criteria.items) {
+            for (const item of criteria.items)
+                convertMongoCriteria(item, mongoCriteria)
+        }
     } else if (criteria.field) {
         const operator = criteria.operator
         const value = criteria.value

@@ -136,8 +136,9 @@ export function parseListQueryValue(criteria: GenericCriteria,
     entityMeta: EntityMeta) {
     // 如果输入的值有问题，可能传递到下面的持久层，如 NaN, undefined, null
     if (criteria.relation)
-        for (const item of criteria.items)
-            parseListQueryValue(item, entityMeta)
+        if (criteria.items)
+            for (const item of criteria.items)
+                parseListQueryValue(item, entityMeta)
     else if (criteria.field) {
         const fieldMeta = entityMeta.fields[criteria.field]
         criteria.value = parseFieldValue(criteria.value, fieldMeta)
@@ -292,10 +293,11 @@ export function checkPasswordEquals(target: string, notSalted: string) {
 
 export function getCollectionName(entityMeta: EntityMeta,
     repo?: string | null) {
+    const tableName = entityMeta.tableName || entityMeta.name
     if (repo === "trash")
-        return entityMeta.tableName + "_trash"
+        return tableName + "_trash"
     else
-        return entityMeta.tableName
+        return tableName
 }
 
 export function newObjectId() {

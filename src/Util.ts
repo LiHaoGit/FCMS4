@@ -94,3 +94,16 @@ export function stringToBoolean(value: string) {
     else
         return undefined
 }
+
+export function arrayToTrueObject(array?: string[]) {
+    if (!array) return null
+
+    const o: {[s: string]: boolean} = {}
+    for (const a of array) o[a] = true
+    return o
+}
+
+export function objectToKeyValuePairString(obj: {[k: string]: any}) {
+    const a = _.map(obj, (k, v) => `${k}=${v}`)
+    return obj && _.join(a, "&") || ""
+}

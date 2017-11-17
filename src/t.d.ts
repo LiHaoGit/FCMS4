@@ -47,6 +47,8 @@ interface EntityMeta {
     mongoIndexes?: MongoIndex[]
     digestFields?: string
     editEnhanceFunc?: string
+    noServiceCache?: boolean
+    removeMode?: string
     fields: {[k: string]: FieldMeta}
 }
 
@@ -67,16 +69,41 @@ declare enum CriteriaRelation {
 }
 
 interface GenericCriteria {
-    __type: CriteriaType
-    relation: CriteriaRelation
-    items: any[],
-    field?: string,
-    operator?: string,
+    __type?: CriteriaType
+    relation?: CriteriaRelation
+    items?: any[]
+    field?: string
+    operator?: string
     value?: any
+    [k:string]: any
 }
 
-interface MongoCriteria {
-    __type: CriteriaType
-}
+type MongoCriteria = any
 
 type AnyCriteria = GenericCriteria | MongoCriteria
+
+interface ExecuteContext {
+
+}
+
+interface UpdateOption {
+    upsert: boolean
+}
+
+interface FindOption {
+    repo?: string
+    includedFields?: string[]
+    pageSize?: number,
+    withoutTotal?: boolean
+}
+
+interface ListOption {
+    entityMeta: EntityMeta
+    criteria?:GenericCriteria
+    sort?: {[k:string]: number}
+    repo?:string
+    includedFields?: string[]
+    pageNo?: number
+    pageSize?: number
+    withoutTotal?: boolean
+}
