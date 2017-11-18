@@ -51,7 +51,7 @@ export async function aUpdateManyByCriteria(entityMeta: EntityMeta,
 
 export async function aUpdateOneByCriteria(entityMeta: EntityMeta,
     criteria: GenericCriteria, instance: EntityValue,
-    options: UpdateOption) {
+    options?: UpdateOption) {
     const update = objectToMongoUpdate(instance)
     if (!update) return 0
 

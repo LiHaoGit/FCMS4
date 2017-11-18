@@ -11,7 +11,7 @@ import { getLogger } from "../Log"
 
 type EntityCreatedListener = (ctx: ExecuteContext, em: EntityMeta) => void
 type EntityUpdatedListener = (ctx: ExecuteContext, em: EntityMeta,
-    ids?: mongodb.ObjectId[]) => void
+    ids?: any[]) => void
 
 const entityCreatedListeners: EntityCreatedListener[] = []
 const entityUpdatedListeners: EntityUpdatedListener[] = []
@@ -42,15 +42,15 @@ export function onEntityCreated(asyncListener: EntityCreatedListener) {
     entityCreatedListeners.push(asyncListener)
 }
 
-exports.onEntityUpdated = function(asyncListener: EntityUpdatedListener) {
+export function onEntityUpdated(asyncListener: EntityUpdatedListener) {
     entityUpdatedListeners.push(asyncListener)
 }
 
-exports.onEntityRemoved = function(asyncListener: EntityUpdatedListener) {
+export function onEntityRemoved(asyncListener: EntityUpdatedListener) {
     entityRemovedListeners.push(asyncListener)
 }
 
-exports.onUpdatedOrRemoved = function(asyncListener: EntityUpdatedListener) {
+export function onUpdatedOrRemoved(asyncListener: EntityUpdatedListener) {
     entityUpdatedListeners.push(asyncListener)
     entityRemovedListeners.push(asyncListener)
 }

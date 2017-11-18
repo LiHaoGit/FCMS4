@@ -1,3 +1,4 @@
+import * as koa from "koa"
 import _ = require("lodash")
 import mongodb = require("mongodb")
 
@@ -106,4 +107,28 @@ export function arrayToTrueObject(array?: string[]) {
 export function objectToKeyValuePairString(obj: {[k: string]: any}) {
     const a = _.map(obj, (k, v) => `${k}=${v}`)
     return obj && _.join(a, "&") || ""
+}
+
+export function inObjectIds(targetId: string, ids: mongodb.ObjectID[]) {
+    for (const id of ids)
+        if (id && id.toString() === targetId) return true
+
+    return false
+}
+
+export function getSingedPortedCookies(ctx: koa.Context, ...names: string[]) {
+    const port = getPortOfUrl(ctx.request.origin)
+    // console.log("port", port)
+    return _.map(names, n => ctx.cookies.get(`${n}-${port}`, {signed: true}))
+}
+
+export function getMyRequestHeaders(ctx: koa.Context, ...names: string[]) {
+    return _.map(names, n => ctx.headers[`X-FCMS-${n}`.toLowerCase()])
+}
+
+function getPortOfUrl(url: string) {
+    const lastSepIndex = url.lastIndexOf(":")
+    const port = lastSepIndex >= 0 ?
+        url.substring(lastSepIndex + 1) : 80
+    return port
 }

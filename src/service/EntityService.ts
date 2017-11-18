@@ -34,7 +34,7 @@ export async function aCreate(conn: ExecuteContext, entityName: string,
 
 export async function aUpdateOneByCriteria(conn: ExecuteContext,
     entityName: string, criteria: GenericCriteria, instance: EntityValue,
-    option: UpdateOption) {
+    option?: UpdateOption) {
     delete instance._id
     delete instance._version
     delete instance._createdBy
@@ -132,7 +132,7 @@ export async function aFindOneById(conn: ExecuteContext, entityName: string,
 }
 
 export async function aFindOneByCriteria(conn: ExecuteContext,
-    entityName: string, criteria: GenericCriteria, options: FindOption) {
+    entityName: string, criteria: GenericCriteria, options?: FindOption) {
     const entityMeta = getEntityMeta(entityName)
 
     let includedFields

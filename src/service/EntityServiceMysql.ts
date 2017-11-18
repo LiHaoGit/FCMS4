@@ -12,7 +12,7 @@ export async function aUpdateManyByCriteria(conn: ExecuteContext,
 
 export async function aUpdateOneByCriteria(conn: ExecuteContext,
     entityMeta: EntityMeta, criteria: GenericCriteria, instance: EntityValue,
-    options: UpdateOption) {
+    options?: UpdateOption) {
     return 0
 }
 

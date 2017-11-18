@@ -3,6 +3,8 @@ exports.cookieKey = ""
 exports.serverPugPath = ""
 exports.uploadPath = ""
 
+const originConfigs: {[origin: string]: any} = {}
+
 const DEFAULT_CONFIG = {
     httpBodyMaxFieldsSize: 6 * 1024 * 1024,
     fileDefaultMaxSize: 6 * 1024 * 1024,
@@ -17,7 +19,8 @@ const DEFAULT_CONFIG = {
     fileDir: "",
     fileDownloadPrefix: "/r/",
     cluster: false,
-    workerNum: 2
+    workerNum: 2,
+    originConfigs
 }
 
 export default DEFAULT_CONFIG

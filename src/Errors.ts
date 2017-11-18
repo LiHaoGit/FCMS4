@@ -39,7 +39,7 @@ define("BadAmount", "金额错误")
 export class MyError extends Error {
     private code: string
 
-    constructor(code: string, message: string) {
+    constructor(code: string, message?: string) {
         message = message || errors[code]
         super(message)
         this.code = code
@@ -54,7 +54,7 @@ export class MyError extends Error {
 
 
 export class UserError extends MyError {
-    constructor(code: string, message: string) {
+    constructor(code: string, message?: string) {
         super(code, message)
     }
 }
@@ -72,8 +72,8 @@ export class SystemError extends MyError {
 }
 
 export class Error401 extends MyError {
-    constructor(code: string, message: string) {
-        super(code, message)
+    constructor() {
+        super("", "")
     }
 }
 
