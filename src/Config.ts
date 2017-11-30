@@ -1,5 +1,7 @@
 const originConfigs: {[origin: string]: any} = {}
 
+const clients: any = {}
+
 const DEFAULT_CONFIG = {
     serverPort: 8090,
     cookieKey: "xxx",
@@ -19,8 +21,10 @@ const DEFAULT_CONFIG = {
     fileDownloadPrefix: "/r/",
     cluster: false,
     workerNum: 2,
+    ssoServer: {clients},
     originConfigs,
-    logConfigs: {}
+    logConfigs: {},
+    errorCatcher: null
 }
 
 export default DEFAULT_CONFIG

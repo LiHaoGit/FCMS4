@@ -945,8 +945,6 @@ export function initSystemMeta(extraEntities: EntityMetaMap) {
     SystemEntities.F_EntityMeta.fields.dbName.options = arrayToOption(databases)
 
     // TODO mysql databases
-
-    exports.SystemEntities = SystemEntities
 }
 
 function mergeEntities(extraEntities: EntityMetaMap) {

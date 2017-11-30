@@ -1,6 +1,7 @@
 import * as koa from "koa"
 import _ = require("lodash")
 import mongodb = require("mongodb")
+import URL = require("url")
 
 const ObjectId = mongodb.ObjectID
 
@@ -122,6 +123,14 @@ export function getSingedPortedCookies(ctx: koa.Context, ...names: string[]) {
     return _.map(names, n => ctx.cookies.get(`${n}-${port}`, {signed: true}))
 }
 
+export function setSingedPortedCookies(ctx: koa.Context,
+    pairs: {[k: string]: any}) {
+    const port = getPortOfUrl(ctx.request.origin)
+    for (const name in pairs) {
+        ctx.cookies.set(`${name}-${port}`, pairs[name], {signed: true})
+    }
+}
+
 export function getMyRequestHeaders(ctx: koa.Context, ...names: string[]) {
     return _.map(names, n => ctx.headers[`X-FCMS-${n}`.toLowerCase()])
 }
@@ -140,4 +149,70 @@ function getPortOfUrl(url: string) {
     const port = lastSepIndex >= 0 ?
         url.substring(lastSepIndex + 1) : 80
     return port
+}
+
+export function isUserHasFieldAction(user: any, entityName: string,
+    fieldName: string, action: string) {
+    const acl = user.acl
+    if (!acl) return false
+
+    const aclField = acl.field
+    if (!aclField) return false
+
+    const aclFieldForEntity = aclField[entityName]
+    if (!aclFieldForEntity) return false
+
+    const aclFieldForEntityField = aclFieldForEntity[fieldName]
+    if (!aclFieldForEntityField) return false
+
+    return aclFieldForEntityField[action]
+}
+
+export function isUserOrRoleHasFieldAction(user: any, entityName: string,
+    fieldName: string, action: string) {
+    if (!user) return false
+    if (isUserHasFieldAction(user, entityName, fieldName, action))
+        return true
+    if (user.roles)
+        for (const roleName in user.roles) {
+            if (user.roles.hasOwnProperty(roleName)) continue
+            const role = user.roles[roleName]
+            if (isUserHasFieldAction(role, entityName, fieldName,
+                action)) return true
+        }
+
+    return false
+}
+
+// null safe, trim element
+export function splitString(str: string | null | undefined, s: string) {
+    if (!str) return null
+    str = _.trim(str)
+    if (!str) return null
+
+    const a1 = _.split(str, s)
+    const a2 = []
+    for (const a of a1) {
+        const i = _.trim(a)
+        if (i) a2.push(i)
+    }
+    return a2
+}
+
+// 确保返回 origin 带端口，即使是 80 端口
+export function getUrlOriginWithPort(urlObject: URL.URL) {
+    let origin = urlObject.origin
+    const port = urlObject.port || 80
+    if (!origin.match(new RegExp(`:${port}$`))) {
+        origin = origin + `:${port}`
+    }
+    return origin
+}
+
+export function firstValueOfObject(object: any) {
+    for (const name in object) {
+        if (!object.hasOwnProperty(name)) continue
+        return object[name]
+    }
+    return null
 }

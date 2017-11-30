@@ -101,7 +101,7 @@ export function stringToObjectId(s: ObjectIdOrStringOrNil) {
 // 如果无法解析 ObjectID 返回 undefined；如果本身是 null/undefined 原样返回
 export function stringToObjectIdSilently(s: ObjectIdOrStringOrNil) {
     try {
-        return exports.stringToObjectId(s)
+        return stringToObjectId(s)
     } catch (e) {
         return undefined
     }

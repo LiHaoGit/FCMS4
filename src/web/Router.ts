@@ -160,7 +160,7 @@ export class Router {
 // 路由规则注册器
 export class RouteRuleRegisters {
     constructor(private urlPrefix: string,
-        private errorCatcher: WebErrorCatcher,
+        private errorCatcher: WebErrorCatcher | null,
         private router: Router) {
         if (!urlPrefix) throw new Error("urlPrefix cannot be empty")
         // 去掉后缀的斜线
@@ -170,7 +170,7 @@ export class RouteRuleRegisters {
     }
 
     // 添加一个路由到路由表
-    add(method: string, url: string, info: RouteInfo | null,
+    add(method: string, url: string, cfg: RouteConfig | null,
         ...handlers: koa.Middleware[]) {
         // 去掉 url 开头的斜线
         if (url === "" || url === "/")
@@ -180,29 +180,33 @@ export class RouteRuleRegisters {
 
         url = this.urlPrefix + "/" + url
 
-        info = info || {urlPrefix: ""}
-        info.errorCatcher = this.errorCatcher
-        info.urlPrefix = this.urlPrefix
+        const info: RouteInfo = {
+            urlPrefix: this.urlPrefix,
+            errorCatcher: this.errorCatcher || undefined,
+            auth: cfg && cfg.auth || undefined,
+            authEntity: cfg && cfg.authEntity || undefined,
+            action: cfg && cfg.action || undefined
+        }
 
         this.router.addRouteRules(method, url, info, ...handlers)
     }
 
     // ---- 以下是添加路由规则的快捷方法
 
-    get(url: string, info: RouteInfo | null, ...handlers: koa.Middleware[]) {
-        this.add("get", url, info, ...handlers)
+    get(url: string, cfg: RouteConfig | null, ...handlers: koa.Middleware[]) {
+        this.add("get", url, cfg, ...handlers)
     }
 
-    post(url: string, info: RouteInfo | null, ...handlers: koa.Middleware[]) {
-        this.add("post", url, info, ...handlers)
+    post(url: string, cfg: RouteConfig | null, ...handlers: koa.Middleware[]) {
+        this.add("post", url, cfg, ...handlers)
     }
 
-    put(url: string, info: RouteInfo | null, ...handlers: koa.Middleware[]) {
-        this.add("put", url, info, ...handlers)
+    put(url: string, cfg: RouteConfig | null, ...handlers: koa.Middleware[]) {
+        this.add("put", url, cfg, ...handlers)
     }
 
-    del(url: string, info: RouteInfo | null, ...handlers: koa.Middleware[]) {
-        this.add("delete", url, info, ...handlers)
+    del(url: string, cfg: RouteConfig | null, ...handlers: koa.Middleware[]) {
+        this.add("delete", url, cfg, ...handlers)
     }
 
     // 分别添加 List/Get/Create/Update 接口的路由

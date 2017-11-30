@@ -84,8 +84,6 @@ function stop() {
 async function aStop() {
     logSystemInfo("Disposing all other resources...")
 
-    // TODO await require('./service/PromotionService').aPersist()
-
     if (Config.cluster) await Redis.aDispose()
 
     await Mongo.aDispose()

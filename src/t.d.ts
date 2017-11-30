@@ -1,4 +1,4 @@
-// cSpell:words repo
+// cSpell:words repo captcha
 
 interface NameLabelOption {
     name: string,
@@ -25,6 +25,9 @@ interface FieldMeta {
     comment?: string
     asFastFilter?: boolean
     inputFunc?: string
+    editReadonly?: boolean
+    notShow?: boolean
+    fileStoreDir?: string
 }
 
 interface MongoIndex {
@@ -51,6 +54,9 @@ interface EntityMeta {
     editEnhanceFunc?: string
     noServiceCache?: boolean
     removeMode?: string
+    noCreate?: boolean
+    noDelete?: boolean
+    noEdit?: boolean
     fields: {[k: string]: FieldMeta}
 }
 
@@ -120,3 +126,12 @@ interface RouteInfo {
     action?: string
     [k:string]:any
 }
+
+interface RouteConfig {
+    auth?: boolean
+    authEntity?: string
+    action?: string
+}
+
+
+declare module 'simple-captcha'

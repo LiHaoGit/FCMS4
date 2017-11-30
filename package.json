@@ -11,7 +11,10 @@
     "mkdirp": "^0.5.1",
     "mongodb": "^2.2.33",
     "redis": "^2.8.0",
-    "server-destroy": "^1.0.1"
+    "request": "^2.83.0",
+    "request-promise-native": "^1.0.5",
+    "server-destroy": "^1.0.1",
+    "simple-captcha": "^0.1.10"
   },
   "devDependencies": {
     "@types/bluebird": "^3.5.18",
@@ -24,6 +27,7 @@
     "@types/mkdirp": "^0.5.1",
     "@types/mongodb": "^2.2.15",
     "@types/redis": "^2.8.1",
+    "@types/request-promise-native": "^1.0.10",
     "@types/server-destroy": "^1.0.0",
     "gulp": "^3.9.1",
     "gulp-typescript": "^3.2.3",

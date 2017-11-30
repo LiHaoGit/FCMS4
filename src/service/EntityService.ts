@@ -230,21 +230,21 @@ export async function aFindManyByIds(conn: ExecuteContext, entityName: string,
     options.pageSize = -1
     options.withoutTotal = true
 
-    return exports.aList(conn, entityName, options)
+    return aList(conn, entityName, options)
 }
 
-export async function aWithTransaction(entityMeta: EntityMeta,
-    aWork: () => void) {
+export async function aWithTransaction<T>(entityMeta: EntityMeta,
+    aWork: (conn: any) => T): Promise<T> {
     // if (entityMeta.db === DB.mysql)
     //     return Mysql.mysql.aWithTransaction(async conn => aWork(conn))
     // else
-    //     return aWork()
+    return aWork({})
 }
 
-export async function aWithoutTransaction(entityMeta: EntityMeta,
-    aWork: () => void) {
+export async function aWithoutTransaction<T>(entityMeta: EntityMeta,
+    aWork: (conn: any) => T): Promise<T> {
     // if (entityMeta.db === DB.mysql)
     //     return Mysql.mysql.aWithoutTransaction(async conn => aWork(conn))
     // else
-    //     return aWork()
+    return aWork({})
 }
