@@ -2,7 +2,7 @@
 
 import { arrayToTrueObject, stringToBoolean } from "../Util"
 
-interface AccessControlArray {
+export interface AccessControlArray {
     menu?: string[]
     button?: string[]
     action?: string[]
@@ -10,11 +10,15 @@ interface AccessControlArray {
     field?: {[entityName: string]: {[fieldName: string]: string[]}}
 }
 
-interface StringToBooleanMap {[k: string]: boolean}
+export interface StringToBooleanMap {
+    [k: string]: boolean
+}
 
-interface StringToBooleanMap2 {[k: string]: StringToBooleanMap | undefined}
+export interface StringToBooleanMap2 {
+    [k: string]: StringToBooleanMap | undefined
+}
 
-interface AccessControlList {
+export interface AccessControlList {
     menu?: StringToBooleanMap
     button?: StringToBooleanMap
     action?: StringToBooleanMap

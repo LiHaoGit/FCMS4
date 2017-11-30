@@ -2,10 +2,9 @@ import * as mongodb from "mongodb"
 import Config from "../Config"
 import { logSystemError, logSystemInfo } from "../Log"
 
-const ObjectId = mongodb.ObjectId
 const MongoClient = mongodb.MongoClient
 
-class MongoStore {
+export class MongoStore {
     private name: string
     private url: string
     private db?: mongodb.Db
@@ -75,8 +74,8 @@ export async function aDispose() {
 }
 
 export function getInsertedIdObject(r: mongodb.InsertOneWriteOpResult)
-    : mongodb.ObjectID | null {
-    return r && r.insertedId || null
+    : mongodb.ObjectId {
+    return r.insertedId
 }
 
 export function getUpdateResult(r: mongodb.UpdateWriteOpResult) {
@@ -87,19 +86,20 @@ export function isIndexConflictError(e: mongodb.MongoError) {
     return e.code === 11000
 }
 
-type ObjectIdOrStringOrNil = mongodb.ObjectID | string | null | undefined
+export type ObjectIdOrStringOrNil = mongodb.ObjectID | string | null | undefined
 
-export function stringToObjectId(s: ObjectIdOrStringOrNil) {
-    if (!s) return s
-
-    if (s instanceof ObjectId)
+export function stringToObjectId(s: string | mongodb.ObjectId)
+    : mongodb.ObjectId {
+    if (s instanceof mongodb.ObjectId)
         return s
     else
-        return new ObjectId(s)
+        return new mongodb.ObjectId(s)
 }
 
 // 如果无法解析 ObjectID 返回 undefined；如果本身是 null/undefined 原样返回
-export function stringToObjectIdSilently(s: ObjectIdOrStringOrNil) {
+export function stringToObjectIdSilently(s: ObjectIdOrStringOrNil)
+    : mongodb.ObjectId | undefined {
+    if (!s) return undefined
     try {
         return stringToObjectId(s)
     } catch (e) {
@@ -109,10 +109,10 @@ export function stringToObjectIdSilently(s: ObjectIdOrStringOrNil) {
 
 // 忽略无法解析的
 export function stringArrayToObjectIdArraySilently(
-    stringArray: ObjectIdOrStringOrNil[]) {
+    stringArray: ObjectIdOrStringOrNil[]): mongodb.ObjectId[] {
     if (!stringArray) return []
 
-    const ids = []
+    const ids: mongodb.ObjectId[] = []
     for (const s of stringArray) {
         const id = stringToObjectIdSilently(s)
         if (id) ids.push(id)

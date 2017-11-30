@@ -2,6 +2,9 @@
     "compilerOptions": {
         "target": "es2017",
         "module": "commonjs",
+        // "moduleResolution": "node",
+        "declaration": true,
+        // "outDir": "./dist",
         "noEmitOnError": true,
         "noFallthroughCasesInSwitch": true,
         "noImplicitAny": true,
@@ -14,6 +17,7 @@
         "strictNullChecks": true
     },
     "include": [
-        "src/**/*"
+        "src/**/*",
+        "index.d.ts"
     ]
 }

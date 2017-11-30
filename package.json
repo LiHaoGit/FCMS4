@@ -1,4 +1,7 @@
 {
+  "name": "fcms4",
+  "version": "0.1.0",
+  "typings": "./index.d.ts",
   "dependencies": {
     "bluebird": "^3.5.1",
     "bunyan": "^1.8.12",
@@ -14,9 +17,7 @@
     "request": "^2.83.0",
     "request-promise-native": "^1.0.5",
     "server-destroy": "^1.0.1",
-    "simple-captcha": "^0.1.10"
-  },
-  "devDependencies": {
+    "simple-captcha": "^0.1.10",
     "@types/bluebird": "^3.5.18",
     "@types/bunyan": "^1.8.3",
     "@types/chance": "^0.7.35",
@@ -28,9 +29,12 @@
     "@types/mongodb": "^2.2.15",
     "@types/redis": "^2.8.1",
     "@types/request-promise-native": "^1.0.10",
-    "@types/server-destroy": "^1.0.0",
+    "@types/server-destroy": "^1.0.0"
+  },
+  "devDependencies": {
     "gulp": "^3.9.1",
     "gulp-typescript": "^3.2.3",
+    "merge2": "^1.2.0",
     "typescript": "^2.6.1"
   }
 }

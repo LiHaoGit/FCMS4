@@ -1,4 +1,4 @@
-// cSpell:words repo captcha
+// cSpell:words repo captcha fcms upsert
 
 interface NameLabelOption {
     name: string,
@@ -124,6 +124,7 @@ interface RouteInfo {
     auth?: boolean
     authEntity?: string
     action?: string
+    isPage?: boolean
     [k:string]:any
 }
 
@@ -131,7 +132,17 @@ interface RouteConfig {
     auth?: boolean
     authEntity?: string
     action?: string
+    isPage?: boolean
 }
 
+interface Extension {
+    aSendSecurityCodeToEmail?: (toEmail: string, code: string) => void
+    aSendSecurityCodeToPhone?: (toPhone: string, code: string) => void
+    aKoaMiddlewareBeforeHandler?: () => void
+}
+
+interface CreateResult {
+    id: any
+}
 
 declare module 'simple-captcha'

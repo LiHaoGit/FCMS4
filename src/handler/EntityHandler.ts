@@ -50,7 +50,7 @@ export async function aCreateEntitiesInBatch(ctx: koa.Context) {
 }
 
 export async function _aCreateEntity(ctx: koa.Context,
-    entityName: string, instance: any) {
+    entityName: string, instance: any): Promise<CreateResult> {
     const entityMeta = getEntityMeta(entityName)
 
     if (!entityMeta) throw new UserError("NoSuchEntity")
@@ -76,7 +76,7 @@ export async function _aCreateEntity(ctx: koa.Context,
         aInterceptCreate(entityName, conn, instance, operator, async() =>
             aCreate(conn, entityName, instance)))
 
-    return {id: r._id}
+    return {id: r.id}
 }
 
 export async function aUpdateEntityById(ctx: koa.Context) {

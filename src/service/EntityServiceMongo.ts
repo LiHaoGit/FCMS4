@@ -10,7 +10,8 @@ import { getInsertedIdObject, getStore, getUpdateResult,
     isIndexConflictError, toMongoCriteria } from "../storage/MongoStore"
 import { arrayToTrueObject } from "../Util"
 
-export async function aCreate(entityMeta: EntityMeta, instance: EntityValue) {
+export async function aCreate(entityMeta: EntityMeta, instance: EntityValue)
+    : Promise<any> {
     // ObjectId 或非 String 的 id 由调用者设置，这里自动设置 String 类型的 ID
     if (entityMeta.fields._id.persistType === "String" && _.isNil(instance._id))
         instance._id = newObjectId().toString()

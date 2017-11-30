@@ -11,7 +11,7 @@ import * as _ from "lodash"
 import {} from "../Log"
 import { setIfNone } from "../Util"
 
-interface RouteRule {
+export interface RouteRule {
     method: string
     url: string
     info: RouteInfo
@@ -185,7 +185,8 @@ export class RouteRuleRegisters {
             errorCatcher: this.errorCatcher || undefined,
             auth: cfg && cfg.auth || undefined,
             authEntity: cfg && cfg.authEntity || undefined,
-            action: cfg && cfg.action || undefined
+            action: cfg && cfg.action || undefined,
+            isPage: cfg && cfg.isPage || undefined
         }
 
         this.router.addRouteRules(method, url, info, ...handlers)

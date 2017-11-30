@@ -12,7 +12,7 @@ import * as MongoService from "./EntityServiceMongo"
 import * as MysqlService from "./EntityServiceMysql"
 
 export async function aCreate(conn: ExecuteContext, entityName: string,
-    instance: EntityValue) {
+    instance: EntityValue): Promise<CreateResult> {
     if (!_.size(instance)) throw new UserError("CreateEmpty", "CreateEmpty")
     const entityMeta = getEntityMeta(entityName)
 
@@ -25,7 +25,7 @@ export async function aCreate(conn: ExecuteContext, entityName: string,
             ? await MysqlService.aCreate(conn, entityMeta, instance)
             : await MongoService.aCreate(entityMeta, instance)
         instance._id = id
-        return {_id: id}
+        return {id}
     } finally {
         // 很可能实体还是被某种程度修改，导致缓存失效
         await aFireEntityCreated(conn, entityMeta)

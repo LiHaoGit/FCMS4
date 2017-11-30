@@ -8,7 +8,7 @@ import { aMoveFileTo } from "../FileUtil"
 import { getEntityMeta, newObjectId } from "../Meta"
 import { firstValueOfObject } from "../Util"
 
-interface File {
+export interface File {
     size: number
     path: string
 }

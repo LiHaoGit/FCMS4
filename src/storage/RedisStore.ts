@@ -1,7 +1,7 @@
 import * as redis from "redis"
 import { logSystemError, logSystemInfo } from "../Log"
 
-type AsyncMessageHandler = (message: string) => Promise<any>
+export type AsyncMessageHandler = (message: string) => Promise<any>
 
 const subscribers: {[k: string]: AsyncMessageHandler[]} = {}
 
@@ -52,7 +52,7 @@ export async function aPublish(channel: string, message: string) {
     if (client) await client.publishAsync(channel, message)
 }
 
-class AsyncRedisClient {
+export class AsyncRedisClient {
     client: redis.RedisClient
 
     constructor() {

@@ -9,8 +9,9 @@ import { logSystemError, logSystemInfo } from "../Log"
 // 但增可能影响所有 otherCache。比如我们查询最新插入一个的实体，新增会导致缓存失效。更新、删除类似。
 // TODO 其实还有一个"根据多个ID查询"。增不影响。修改、删除时检查被操作的ID是否在这些ID中，不在就不需要删除缓存。
 
-type EntityCreatedListener = (ctx: ExecuteContext, em: EntityMeta) => void
-type EntityUpdatedListener = (ctx: ExecuteContext, em: EntityMeta,
+export type EntityCreatedListener = (ctx: ExecuteContext, em: EntityMeta)
+    => void
+export type EntityUpdatedListener = (ctx: ExecuteContext, em: EntityMeta,
     ids?: any[]) => void
 
 const entityCreatedListeners: EntityCreatedListener[] = []

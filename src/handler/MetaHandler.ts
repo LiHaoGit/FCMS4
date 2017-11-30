@@ -1,7 +1,6 @@
 import * as koa from "koa"
 import { actions, aRemoveEntityMeta, aSaveEntityMeta,
-    DB, getEntities, getMetaForFront } from "../Meta"
-import { patchSystemFields } from "../SystemMeta"
+    DB, getEntities, getMetaForFront, patchSystemFields } from "../Meta"
 
 export async function aGetAllMeta(ctx: koa.Context) {
     ctx.body = getMetaForFront()

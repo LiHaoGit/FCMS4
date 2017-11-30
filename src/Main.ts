@@ -13,6 +13,7 @@ import * as Mongo from "./storage/MongoStore"
 // const RefactorMysqlTable = require("./storage/RefactorMysqlTable")
 import * as Redis from "./storage/RedisStore"
 import * as SystemInit from "./SystemInit"
+import { addCommonRouteRules } from "./web/CommonRouterRules"
 import { Router } from "./web/Router"
 import * as WebServer from "./web/WebServer"
 
@@ -61,8 +62,7 @@ export async function aStart(appConfig: any,
         // 路由表
         const router = new Router()
 
-        // const CommonRouterRules = require("./web/CommonRouterRules")
-        // CommonRouterRules.addCommonRouteRules(router.RouteRuleRegisters)
+        addCommonRouteRules(router)
         if (addRouteRules) addRouteRules(router)
 
         logSystemInfo("Starting the web server...")

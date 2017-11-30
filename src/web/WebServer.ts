@@ -3,16 +3,18 @@
 import * as http from "http"
 import * as Koa from "koa"
 import koaBody = require("koa-body")
+import * as Pug from "koa-pug"
 import enableDestroy = require("server-destroy")
 import Config from "../Config"
 import { Error401, Error403, UserError } from "../Errors"
 import { extension } from "../Extension"
 import { aControlAccess, aIdentifyUser } from "../handler/AccessController"
 import { logSystemError } from "../Log"
-import { pug } from "./Pug"
 import { aHandleRoute, Router } from "./Router"
 
 let server: http.Server
+
+export const pugLocals = {}
 
 export async function aStart(router: Router) {
     configKoaServer(router)
@@ -44,11 +46,17 @@ function configKoaServer(router: Router) {
     koaServer.proxy = true
 
     // pug
+    const pug = new Pug({
+        viewPath: Config.serverPugPath,
+        locals: pugLocals,
+        noCache: process.env.DEV === "1"
+    })
+
     pug.use(koaServer as any)
 
     router.refresh()
 
-    koaServer.use(router.aParseRoute)
+    koaServer.use((ctx, next) => router.aParseRoute(ctx, next))
 
     koaServer.use(aCatchError) // 匹配路由的过程不需要拦截错误
 

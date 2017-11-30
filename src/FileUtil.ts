@@ -37,3 +37,16 @@ export async function aFileExists(fileFullPath: string) {
         throw e
     }
 }
+
+export async function aReadJSON(file: string) {
+    return new Promise((resolve, reject) => {
+        fs.readFile(file, {encoding: "UTF-8"}, (err, text) => {
+            if (err) {
+                reject(err)
+                return
+            }
+            const json = text ? JSON.parse(text) : null
+            resolve(json)
+        })
+    })
+}
