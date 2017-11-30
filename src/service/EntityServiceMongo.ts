@@ -4,7 +4,7 @@ import * as _ from "lodash"
 import * as mongodb from "mongodb"
 
 import { UniqueConflictError } from "../Errors"
-import { getLogger } from "../Log"
+import { logSystemWarn } from "../Log"
 import { getCollectionName, newObjectId } from "../Meta"
 import { getInsertedIdObject, getStore, getUpdateResult,
     isIndexConflictError, toMongoCriteria } from "../storage/MongoStore"
@@ -182,8 +182,6 @@ export async function aList(options: ListOption) {
 
 function errorToDupKeyError(e: Error, entityMeta: EntityMeta) {
     // Log.debug("toDupKeyError, message", e.message)
-    const systemLogger = getLogger("system")
-
     const matches = e.message.match(/index:\s(.+) dup key: (.+)/)
     if (matches) {
         let indexName = matches[1]
@@ -195,7 +193,7 @@ function errorToDupKeyError(e: Error, entityMeta: EntityMeta) {
 
         const indexConfig = _.find(entityMeta.mongoIndexes, i =>
             entityMeta.tableName + "_" + i.name === indexName)
-        if (!indexConfig) systemLogger.warn("No index config for " + indexName)
+        if (!indexConfig) logSystemWarn("No index config for " + indexName)
         const message = indexConfig && indexConfig.errorMessage ||
             `值重复：${indexName}`
         return {code: "DupKey", message, key: indexName}

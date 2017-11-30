@@ -1,8 +1,9 @@
 import * as koa from "koa"
 import Config from "../Config"
 import { Error401, Error403, UserError } from "../Errors"
-import {  } from "../Log"
-import { aAuthToken } from "../security/UserService"
+import { logSystemError } from "../Log"
+import { aAuthToken, aGetAnonymousRole,
+    aRoleById } from "../security/UserService"
 import { getMyRequestHeaders , getSingedPortedCookies } from "../Util"
 
 export async function aIdentifyUser(ctx: koa.Context, next: any) {
@@ -51,10 +52,10 @@ export async function aControlAccess(ctx: koa.Context, next: any) {
 }
 
 async function aCheckAll(httpCtx: koa.Context) {
-    const route = httpCtx.route
-    const state = httpCtx.state
+    const route = httpCtx.state.route
+    const state = httpCtx.state.state
 
-    const ri = route.info
+    const ri = route.info as RouteInfo
     if (!(ri.auth || ri.action)) return true // 明确表示不需要登录直接返回 true
 
     if (state.user && state.user.admin) return true // admin 跳过一切权限
@@ -65,19 +66,19 @@ async function aCheckAll(httpCtx: koa.Context) {
     } else if (ri.auth) {
         // 只要登录即可，无权限
         return !!state.user
-    } else {
-        const aAuthHandler = authHandlers[ri.auth]
+    } else if (ri.authEntity) {
+        const aAuthHandler = (authHandlers as any)[ri.authEntity]
         if (!aAuthHandler) {
-            Log.system.error("No auth handler for " + ri.auth)
+            logSystemError("No auth handler for " + ri.auth)
             return false
         }
 
-        await aAuthHandler(httpCtx)
+        return aAuthHandler(httpCtx)
     }
 }
 
 // 检查用户是否有固定权限
-async function aCheckUserHasAction(user, action) {
+async function aCheckUserHasAction(user: any, action: string) {
     if (!user) return false
 
     if (user.acl && user.acl.action && user.acl.action[action]) return true
@@ -85,7 +86,7 @@ async function aCheckUserHasAction(user, action) {
     const roles = user.roles
     if (roles)
         for (const roleId of roles) {
-            const role = await UserService.aRoleById(roleId)
+            const role = await aRoleById(roleId)
             if (role && role.acl && role.acl.action && role.acl.action[action])
                 return true
         }
@@ -93,37 +94,38 @@ async function aCheckUserHasAction(user, action) {
 }
 
 const authHandlers = {
-    async listEntity(httpCtx) {
+    async listEntity(httpCtx: koa.Context) {
         return aCheckUserHasEntityAction(httpCtx.state.user, "List",
-            httpCtx.params.entityName)
+            httpCtx.state.params.entityName)
     },
-    async getEntity(httpCtx) {
+    async getEntity(httpCtx: koa.Context) {
         return aCheckUserHasEntityAction(httpCtx.state.user, "Get",
-            httpCtx.params.entityName)
+            httpCtx.state.params.entityName)
     },
-    async createEntity(httpCtx) {
+    async createEntity(httpCtx: koa.Context) {
         return aCheckUserHasEntityAction(httpCtx.state.user, "Create",
-            httpCtx.params.entityName)
+            httpCtx.state.params.entityName)
     },
-    async updateOneEntity(httpCtx) {
+    async updateOneEntity(httpCtx: koa.Context) {
         return aCheckUserHasEntityAction(httpCtx.state.user,
-            "UpdateOne", httpCtx.params.entityName)
+            "UpdateOne", httpCtx.state.params.entityName)
     },
-    async updateManyEntity(httpCtx) {
+    async updateManyEntity(httpCtx: koa.Context) {
         return aCheckUserHasEntityAction(httpCtx.state.user,
-            "UpdateMany", httpCtx.params.entityName)
+            "UpdateMany", httpCtx.state.params.entityName)
     },
-    async removeEntity(httpCtx) {
+    async removeEntity(httpCtx: koa.Context) {
         return aCheckUserHasEntityAction(httpCtx.state.user, "Remove",
-            httpCtx.params.entityName)
+            httpCtx.state.params.entityName)
     },
-    async recoverEntity(httpCtx) {
+    async recoverEntity(httpCtx: koa.Context) {
         return aCheckUserHasEntityAction(httpCtx.state.user,
-            "Recover", httpCtx.params.entityName)
+            "Recover", httpCtx.state.params.entityName)
     }
 }
 
-async function aCheckUserHasEntityAction(user, action, entityName) {
+async function aCheckUserHasEntityAction(user: any, action: string,
+    entityName: string) {
     if (user) {
         let entityAcl = user.acl && user.acl.entity &&
             user.acl.entity[entityName]
@@ -132,7 +134,7 @@ async function aCheckUserHasEntityAction(user, action, entityName) {
         const roles = user.roles
         if (roles)
             for (const roleId of roles) {
-                const role = await UserService.aRoleById(roleId)
+                const role = await aRoleById(roleId)
                 if (role) {
                     entityAcl = role && role.acl && role.acl.entity &&
                         role.acl.entity[entityName]
@@ -141,7 +143,7 @@ async function aCheckUserHasEntityAction(user, action, entityName) {
                 }
             }
     } else {
-        const role = await UserService.aGetAnonymousRole()
+        const role = await aGetAnonymousRole()
         if (role) {
             const entityAcl = role.acl && role.acl.entity &&
                 role.acl.entity[entityName]

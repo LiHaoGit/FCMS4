@@ -4,7 +4,7 @@ import * as bluebird from "bluebird"
 import * as fs from "fs"
 import * as mkdirp from "mkdirp"
 import * as path from "path"
-import { getLogger } from "./Log"
+import { logSystemError } from "./Log"
 
 const pMakeDir = bluebird.promisify(mkdirp)
 
@@ -14,16 +14,13 @@ const pRename = bluebird.promisify(fs.rename)
 
 const pStat = bluebird.promisify(fs.stat)
 
-
 export async function aMoveFileTo(oldName: string, newName: string) {
-    const systemLogger = getLogger("system")
-
     const targetDir = path.dirname(newName)
     let stats
     try {
         stats = await pStat(targetDir)
     } catch (e) {
-        systemLogger.error(e, "pStat")
+        logSystemError(e, "pStat")
     }
 
     if (!(stats && stats.isDirectory()))

@@ -1,5 +1,5 @@
 import * as redis from "redis"
-import { getLogger } from "../Log"
+import { logSystemError, logSystemInfo } from "../Log"
 
 type AsyncMessageHandler = (message: string) => Promise<any>
 
@@ -9,25 +9,23 @@ let client: AsyncRedisClient
 let subscriberClient: AsyncRedisClient
 
 export async function aInit() {
-    const systemLogger = getLogger("system")
-
     client = new AsyncRedisClient()
 
-    client.client.on("error", error => systemLogger.error(error, "init redis"))
-    client.client.on("ready", () => systemLogger.info("Redis ready"))
-    client.client.on("connect", () => systemLogger.info("Redis connect"))
+    client.client.on("error", error => logSystemError(error, "init redis"))
+    client.client.on("ready", () => logSystemInfo("Redis ready"))
+    client.client.on("connect", () => logSystemInfo("Redis connect"))
 
     subscriberClient = new AsyncRedisClient()
     subscriberClient.client.on("subscribe",
-        () => systemLogger.info("Redis subscribe"))
+        () => logSystemInfo("Redis subscribe"))
 
     subscriberClient.client.on("message", (channel, message) => {
-        systemLogger.info("ON REDIS MESSAGE", channel, message)
+        logSystemInfo("ON REDIS MESSAGE", channel, message)
         const asyncHandlers = subscribers[channel]
         if (asyncHandlers)
             for (const asyncHandler of asyncHandlers)
-                asyncHandler(message).catch(e =>
-                    systemLogger.error(e, "handle message"))
+                asyncHandler(message)
+                    .catch(e => logSystemError(e, "handle message"))
     })
 
     await subscriberClient.subscribeAsync("test", "MetaChange")

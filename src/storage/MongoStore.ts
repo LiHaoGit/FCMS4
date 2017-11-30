@@ -1,6 +1,6 @@
 import * as mongodb from "mongodb"
 import Config from "../Config"
-import { getLogger } from "../Log"
+import { logSystemError, logSystemInfo } from "../Log"
 
 const ObjectId = mongodb.ObjectId
 const MongoClient = mongodb.MongoClient
@@ -16,39 +16,35 @@ class MongoStore {
     }
 
     async aDatabase() {
-        const systemLogger = getLogger("system")
-
         if (this.db) return this.db
 
         this.db = await MongoClient.connect(this.url)
 
         this.db.on("close", () => {
             delete this.db
-            systemLogger.info(`MongoDB [${this.name}] closed`)
+            logSystemInfo(`MongoDB [${this.name}] closed`)
         })
 
         this.db.on("error", e => {
             delete this.db
-            systemLogger.error(e, `MongoDB [${this.name}] error`)
+            logSystemError(e, `MongoDB [${this.name}] error`)
         })
 
         this.db.on("reconnect", () => {
-            systemLogger.info(`Mongo DB [${this.name}] reconnect`)
+            logSystemInfo(`Mongo DB [${this.name}] reconnect`)
         })
 
         return this.db
     }
 
     async aDispose() {
-        const systemLogger = getLogger("system")
-
-        systemLogger.info(`Closing mongodb [${this.name}]...`)
+        logSystemInfo(`Closing mongodb [${this.name}]...`)
         if (!this.db) return
 
         try {
             await this.db.close()
         } catch (e) {
-            systemLogger.error(e, `Error on disposing mongodb [${this.name}]`)
+            logSystemError(e, `Error on disposing mongodb [${this.name}]`)
         }
     }
 }
@@ -64,10 +60,8 @@ export function getMainStore() {
 }
 
 export function init() {
-    const systemLogger = getLogger("system")
-
     if (!Config.mongoDatabases) {
-        systemLogger.warn("No mongo!")
+        logSystemError("No mongo!")
         return
     }
     for (const db of Config.mongoDatabases) {

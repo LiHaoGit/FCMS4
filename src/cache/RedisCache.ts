@@ -1,5 +1,5 @@
 import _ = require("lodash")
-import { getLogger } from "../Log"
+import { logSystemDebug } from "../Log"
 import { getMainClient } from "../storage/RedisStore"
 import { jsObjectToTypedJSON, typedJSONToJsObject } from "../Util"
 
@@ -49,8 +49,7 @@ export async function aUnset(keyArray: string[], lastKeys?: string[]) {
         keyArray = await client.keysAsync(key)
     }
 
-    const systemLogger = getLogger("system")
-    systemLogger.debug("unset redis keys", keyArray)
+    logSystemDebug("unset redis keys", keyArray)
     if (keyArray.length) client.mDelAsync(keyArray)
 }
 

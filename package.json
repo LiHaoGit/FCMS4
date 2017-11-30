@@ -4,20 +4,27 @@
     "bunyan": "^1.8.12",
     "chance": "^1.0.12",
     "koa": "^2.4.1",
+    "koa-body": "^2.5.0",
+    "koa-compose": "^4.0.0",
+    "koa-pug": "^3.0.0-2",
     "lodash": "^4.17.4",
     "mkdirp": "^0.5.1",
     "mongodb": "^2.2.33",
-    "redis": "^2.8.0"
+    "redis": "^2.8.0",
+    "server-destroy": "^1.0.1"
   },
   "devDependencies": {
     "@types/bluebird": "^3.5.18",
     "@types/bunyan": "^1.8.3",
     "@types/chance": "^0.7.35",
     "@types/koa": "^2.0.40",
+    "@types/koa-compose": "^3.2.2",
+    "@types/koa-pug": "^3.0.3",
     "@types/lodash": "^4.14.84",
     "@types/mkdirp": "^0.5.1",
     "@types/mongodb": "^2.2.15",
     "@types/redis": "^2.8.1",
+    "@types/server-destroy": "^1.0.0",
     "gulp": "^3.9.1",
     "gulp-typescript": "^3.2.3",
     "typescript": "^2.6.1"

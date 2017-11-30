@@ -3,7 +3,7 @@ import * as _ from "lodash"
 import * as mongodb from "mongodb"
 
 import { UserError } from "../Errors"
-import { getLogger } from "../Log"
+import { } from "../Log"
 import { DB, getEntityMeta } from "../Meta"
 import { objectToKeyValuePairString } from "../Util"
 import { aFireEntityCreated, aFireEntityRemoved,

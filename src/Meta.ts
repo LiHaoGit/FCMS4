@@ -3,7 +3,7 @@
 import * as crypto from "crypto"
 import * as _ from "lodash"
 import * as mongodb from "mongodb"
-import { getLogger } from "./Log"
+import { logSystemInfo } from "./Log"
 import { getMainStore, stringToObjectIdSilently } from "./storage/MongoStore"
 import { aPublish, subscribe } from "./storage/RedisStore"
 import { initSystemMeta, SystemEntities } from "./SystemMeta"
@@ -64,11 +64,9 @@ export function getMetaForFront() {
 }
 
 export async function aLoad(extraEntities: {[k: string]: EntityMeta}) {
-    const systemLogger = getLogger("system")
-
     subscribe("MetaChange", async function(metaStoreId) {
         if (metaStoreId !== MetaStoreId) return
-        systemLogger.info("MetaChanged")
+        logSystemInfo("MetaChanged")
         await aLoad({})
     })
 
@@ -85,7 +83,7 @@ export async function aLoad(extraEntities: {[k: string]: EntityMeta}) {
 
     Object.assign(entities, SystemEntities)
 
-    systemLogger.info("Meta loaded")
+    logSystemInfo("Meta loaded")
 }
 
 export async function aSaveEntityMeta(entityName: string,

@@ -1,20 +1,18 @@
-const Meta = require("../Meta")
-import { getLogger } from "../Log"
+import { logSystemError } from "../Log"
+import { DB, getEntities } from "../Meta"
 import { getStore } from "./MongoStore"
 
 // 在执行数据库创建指定实体的元数据
-exports.aSyncWithMeta = async function() {
-    const systemLogger = getLogger("system")
-
-    const entities = Meta.getEntities()
+export  async function aSyncWithMeta() {
+    const entities = getEntities()
     for (const entityName in entities) {
         if (!entities.hasOwnProperty(entityName)) continue
         const entityMeta = entities[entityName]
-        if (entityMeta.db !== Meta.DB.mongo) continue
+        if (entityMeta.db !== DB.mongo) continue
 
         try {
-            const db = await getStore(entityMeta.dbName).aDatabase()
-            const tableName = entityMeta.tableName
+            const db = await getStore(entityMeta.dbName || "main").aDatabase()
+            const tableName = entityMeta.tableName || entityMeta.name
             const c = db.collection(tableName)
             const currentIndexes = entityMeta.mongoIndexes || []
             // 创建索引
@@ -36,7 +34,7 @@ exports.aSyncWithMeta = async function() {
             // 小心不要删除主键！！
             // existedIndexes = await c.listIndexes().toArray()
         } catch (e) {
-            systemLogger.error(e, "create mongo index", entityName)
+            logSystemError(e, "create mongo index", entityName)
         }
     }
 }

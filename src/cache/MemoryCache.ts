@@ -1,5 +1,5 @@
 import _ = require("lodash")
-import { getLogger } from "../Log"
+import { logSystemInfo } from "../Log"
 
 let cache = {}
 
@@ -47,7 +47,6 @@ export async function aUnset(keyArray: string[], lastKeys?: string[]) {
 }
 
 export async function aClearAllCache() {
-    const systemLogger = getLogger("system")
-    systemLogger.info("clear all cache / memory")
+    logSystemInfo("clear all cache / memory")
     cache = {}
 }

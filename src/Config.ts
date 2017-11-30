@@ -1,11 +1,10 @@
-exports.serverPort = 7090
-exports.cookieKey = ""
-exports.serverPugPath = ""
-exports.uploadPath = ""
-
 const originConfigs: {[origin: string]: any} = {}
 
 const DEFAULT_CONFIG = {
+    serverPort: 8090,
+    cookieKey: "xxx",
+    serverPugPath: "",
+    uploadPath: "",
     httpBodyMaxFieldsSize: 6 * 1024 * 1024,
     fileDefaultMaxSize: 6 * 1024 * 1024,
     imageDefaultMaxSize: 2 * 1024 * 1024,
@@ -20,7 +19,8 @@ const DEFAULT_CONFIG = {
     fileDownloadPrefix: "/r/",
     cluster: false,
     workerNum: 2,
-    originConfigs
+    originConfigs,
+    logConfigs: {}
 }
 
 export default DEFAULT_CONFIG

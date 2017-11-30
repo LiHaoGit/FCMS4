@@ -2,7 +2,7 @@ import * as _ from "lodash"
 import * as mongodb from "mongodb"
 import { aGetObject, aSetObject, aUnset } from "../cache/Cache"
 // const sizeof = require('object-sizeof')
-import { getLogger } from "../Log"
+import { logSystemError, logSystemInfo } from "../Log"
 
 // 缓存分两类：1、byIdCache：根据 ID 查询单个实体。2、otherCache：其他，包括根据非 ID 查询单个实体。
 // 增删改三个操作。增不影响 byIdCache；删和改影响指定 ID 的 byIdCache；
@@ -57,7 +57,6 @@ export function onUpdatedOrRemoved(asyncListener: EntityUpdatedListener) {
 
 export async function aFireEntityCreated(ctx: ExecuteContext,
     entityMeta: EntityMeta) {
-    const systemLogger = getLogger("system")
 
     await aUnset(["Entity", entityMeta.name, "Other"])
 
@@ -65,7 +64,7 @@ export async function aFireEntityCreated(ctx: ExecuteContext,
         try {
             await asyncListener(ctx, entityMeta)
         } catch (e) {
-            systemLogger.error(e, "fireEntityCreated")
+            logSystemError(e, "fireEntityCreated")
             throw e
         }
     }
@@ -73,7 +72,6 @@ export async function aFireEntityCreated(ctx: ExecuteContext,
 
 export async function aFireEntityUpdated(ctx: ExecuteContext,
     entityMeta: EntityMeta, ids?: mongodb.ObjectID[]) {
-    const systemLogger = getLogger("system")
 
     await aUnset(["Entity", entityMeta.name, "Other"])
     await aRemoveOneCacheByIds(entityMeta, ids)
@@ -82,7 +80,7 @@ export async function aFireEntityUpdated(ctx: ExecuteContext,
         try {
             await asyncListener(ctx, entityMeta, ids)
         } catch (e) {
-            systemLogger.error(e, "onEntityUpdated")
+            logSystemError(e, "onEntityUpdated")
             throw e
         }
     }
@@ -90,7 +88,6 @@ export async function aFireEntityUpdated(ctx: ExecuteContext,
 
 export async function aFireEntityRemoved(ctx: ExecuteContext,
     entityMeta: EntityMeta, ids?: mongodb.ObjectID[]) {
-    const systemLogger = getLogger("system")
 
     await aUnset(["Entity", entityMeta.name, "Other"])
     await aRemoveOneCacheByIds(entityMeta, ids)
@@ -99,7 +96,7 @@ export async function aFireEntityRemoved(ctx: ExecuteContext,
         try {
             await asyncListener(ctx, entityMeta, ids)
         } catch (e) {
-            systemLogger.error(e, "onEntityRemoved")
+            logSystemError(e, "onEntityRemoved")
             throw e
         }
     }

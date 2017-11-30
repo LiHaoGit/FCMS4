@@ -1,3 +1,5 @@
+// cSpell:words repo
+
 interface NameLabelOption {
     name: string,
     label: string
@@ -108,4 +110,13 @@ interface ListOption {
     withoutTotal?: boolean
 }
 
+type WebErrorCatcher = ()=>void
 
+interface RouteInfo {
+    urlPrefix: string
+    errorCatcher?: WebErrorCatcher
+    auth?: boolean
+    authEntity?: string
+    action?: string
+    [k:string]:any
+}

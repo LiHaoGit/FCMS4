@@ -126,6 +126,15 @@ export function getMyRequestHeaders(ctx: koa.Context, ...names: string[]) {
     return _.map(names, n => ctx.headers[`X-FCMS-${n}`.toLowerCase()])
 }
 
+export function setIfNone(object: any, field: string, alt: any) {
+    const v = object[field]
+    if (!_.isNil(v)) return v
+
+    object[field] = _.isFunction(alt) ? alt() : alt
+
+    return object[field]
+}
+
 function getPortOfUrl(url: string) {
     const lastSepIndex = url.lastIndexOf(":")
     const port = lastSepIndex >= 0 ?
