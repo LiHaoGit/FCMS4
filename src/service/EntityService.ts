@@ -224,8 +224,7 @@ export async function aFindManyByIds(conn: ExecuteContext, entityName: string,
         : (options || {entityMeta})
 
     options.criteria = {
-        __type: CriteriaType.Relation,
-        field: "_id", operator: "in", value: ids
+        __type: "relation", field: "_id", operator: "in", value: ids
     }
     options.pageSize = -1
     options.withoutTotal = true

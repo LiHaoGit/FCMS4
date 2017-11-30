@@ -8,7 +8,7 @@ import * as koa from "koa"
 import * as compose from "koa-compose"
 import * as _ from "lodash"
 
-import {} from "../Log"
+import { logSystemDebug } from "../Log"
 import { setIfNone } from "../Util"
 
 export interface RouteRule {
@@ -93,8 +93,8 @@ export class Router {
             ctx.state.route = route
             await next()
         } else {
-            // Log.debug("Fail to match route",
-            //    {method: ctx.request.method, path})
+            logSystemDebug("Fail to match route",
+                {method: ctx.request.method, path})
             ctx.status = 404
         }
     }

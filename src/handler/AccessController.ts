@@ -52,8 +52,8 @@ export async function aControlAccess(ctx: koa.Context, next: any) {
 }
 
 async function aCheckAll(httpCtx: koa.Context) {
-    const route = httpCtx.state.route
-    const state = httpCtx.state.state
+    const state = httpCtx.state
+    const route = state.route
 
     const ri = route.info as RouteInfo
     if (!(ri.auth || ri.action)) return true // 明确表示不需要登录直接返回 true

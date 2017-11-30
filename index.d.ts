@@ -4,6 +4,7 @@ interface NameLabelOption {
     name: string,
     label: string
 }
+
 interface FieldMeta {
     system?: boolean
     name: string
@@ -60,25 +61,17 @@ interface EntityMeta {
     fields: {[k: string]: FieldMeta}
 }
 
-interface EntityMetaMap {[k: string]: EntityMeta}
+interface EntityMetaMap {
+    [k: string]: EntityMeta
+}
 
 interface EntityValue {
     [k: string]: any
 }
 
-declare enum CriteriaType {
-    Relation = "relation",
-    Mongo = "mongo"
-}
-
-declare enum CriteriaRelation {
-    AND = "and",
-    OR = "or"
-}
-
 interface GenericCriteria {
-    __type?: CriteriaType
-    relation?: CriteriaRelation
+    __type?: string
+    relation?: string
     items?: any[]
     field?: string
     operator?: string
@@ -91,7 +84,6 @@ type MongoCriteria = any
 type AnyCriteria = GenericCriteria | MongoCriteria
 
 interface ExecuteContext {
-
 }
 
 interface UpdateOption {

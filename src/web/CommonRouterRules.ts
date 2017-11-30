@@ -12,6 +12,7 @@ import * as SsoClientHandler from "../handler/SsoClientHandler"
 import * as SsoServerHandler from "../handler/SsoServerHandler"
 import * as UploadHandler from "../handler/UploadHandler"
 import * as UserHandler from "../handler/UserHandler"
+import { logSystemInfo } from "../Log"
 
 const actions = {
     ReadMeta: "读取元数据",
@@ -70,6 +71,8 @@ export function addCommonRouteRules(router: Router) {
 
         rrr.get("/sso/client/token", {}, SsoClientHandler.aAcceptToken)
         rrr.get("/sso/client/sign-out", {}, SsoClientHandler.aSignOut)
+    } else {
+        logSystemInfo("Not use SSO")
     }
 
     // ======================================

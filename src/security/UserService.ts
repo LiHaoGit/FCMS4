@@ -139,8 +139,7 @@ export async function aSignIn(origin: string, username: string,
     const matchFields = []
     for (const f of usernameFields)
         matchFields.push({field: f, operator: "==", value: username})
-    const criteria = {__type: CriteriaType.Relation,
-        relation: CriteriaRelation.OR, items: matchFields}
+    const criteria = {__type: "relation", relation: "or", items: matchFields}
 
     const user = await aFindOneByCriteria({}, "F_User", criteria)
 

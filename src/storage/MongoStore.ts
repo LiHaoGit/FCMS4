@@ -144,7 +144,7 @@ function convertMongoCriteria(criteria: GenericCriteria,
     mongoCriteria: any) {
     if (!criteria) return
 
-    if (criteria.relation === CriteriaRelation.OR) {
+    if (criteria.relation === "or") {
         const items = []
         if (criteria.items) {
             for (const item of criteria.items) {
@@ -154,7 +154,7 @@ function convertMongoCriteria(criteria: GenericCriteria,
             }
         }
         mongoCriteria.$or = items
-    } else if (criteria.relation === CriteriaRelation.AND) {
+    } else if (criteria.relation === "and") {
         if (criteria.items) {
             for (const item of criteria.items)
                 convertMongoCriteria(item, mongoCriteria)

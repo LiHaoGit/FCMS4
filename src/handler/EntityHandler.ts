@@ -160,7 +160,7 @@ export async function aDeleteEntityInBatch(ctx: koa.Context) {
     if (!(ids.length > 0)) throw new UserError("EmptyOperation")
 
     const criteria = {
-        __type: CriteriaType.Relation, relation: CriteriaRelation.AND,
+        __type: "relation", relation: "and",
         items: [{field: "_id", operator: "in", value: ids}]
     }
 
