@@ -1,16 +1,15 @@
-// cSpell:words repo
+// cSpell:words repo Serv
 
 import * as _ from "lodash"
 import * as mongodb from "mongodb"
 
 import { UserError } from "../Errors"
-import { } from "../Log"
-import { DB, getEntityMeta } from "../Meta"
+import { DB, getEntityMeta, parseId } from "../Meta"
 import { objectToKeyValuePairString } from "../Util"
 import { aFireEntityCreated, aFireEntityRemoved,
     aFireEntityUpdated, aWithCache } from "./EntityServiceCache"
-import * as MongoService from "./EntityServiceMongo"
-import * as MysqlService from "./EntityServiceMysql"
+import * as MongoServ from "./EntityServiceMongo"
+import * as MysqlServ from "./EntityServiceMysql"
 
 export async function aCreate(conn: ExecuteContext, entityName: string,
     instance: EntityValue): Promise<CreateResult> {
@@ -23,8 +22,8 @@ export async function aCreate(conn: ExecuteContext, entityName: string,
 
     try {
         const id = entityMeta.db === DB.mysql
-            ? await MysqlService.aCreate(conn, entityMeta, instance)
-            : await MongoService.aCreate(entityMeta, instance)
+            ? await MysqlServ.aCreate(conn, entityMeta, instance)
+            : await MongoServ.aCreate(entityMeta, instance)
         instance._id = id
         return {id}
     } finally {
@@ -49,9 +48,9 @@ export async function aUpdateOneByCriteria(conn: ExecuteContext,
 
     try {
         return (entityMeta.db === DB.mysql)
-            ? MysqlService.aUpdateOneByCriteria(conn, entityMeta,
+            ? MysqlServ.aUpdateOneByCriteria(conn, entityMeta,
                 criteria, instance, option)
-            : MongoService.aUpdateOneByCriteria(entityMeta,
+            : MongoServ.aUpdateOneByCriteria(entityMeta,
                 criteria, instance, option)
     } finally {
         // TODO 清除效率改进
@@ -73,10 +72,10 @@ export async function aUpdateManyByCriteria(conn: ExecuteContext,
     const entityMeta = getEntityMeta(entityName)
 
     try {
-        return (entityMeta.db === DB.mysql)
-            ? MysqlService.aUpdateManyByCriteria(conn,
+        return entityMeta.db === DB.mysql
+            ? MysqlServ.aUpdateManyByCriteria(conn,
                 entityMeta, criteria, instance)
-            : MongoService.aUpdateManyByCriteria(entityMeta,
+            : MongoServ.aUpdateManyByCriteria(entityMeta,
                 criteria, instance)
     } finally {
         // TODO 清除效率改进
@@ -90,8 +89,8 @@ export async function aRemoveManyByCriteria(conn: ExecuteContext,
 
     try {
         return (entityMeta.db === DB.mysql)
-            ? MysqlService.aRemoveManyByCriteria(conn, entityMeta, criteria)
-            : MongoService.aRemoveManyByCriteria(entityMeta, criteria)
+            ? MysqlServ.aRemoveManyByCriteria(conn, entityMeta, criteria)
+            : MongoServ.aRemoveManyByCriteria(entityMeta, criteria)
     } finally {
         // TODO 清除效率改进
         await aFireEntityRemoved(conn, entityMeta)
@@ -103,63 +102,56 @@ export async function aRecoverMany(conn: ExecuteContext, entityName: string,
     const entityMeta = getEntityMeta(entityName)
 
     try {
-        return (entityMeta.db === DB.mysql)
-            ? MysqlService.aRecoverMany(conn, entityMeta, ids)
-            : MongoService.aRecoverMany(entityMeta, ids)
+        return entityMeta.db === DB.mysql
+            ? MysqlServ.aRecoverMany(conn, entityMeta, ids)
+            : MongoServ.aRecoverMany(entityMeta, ids)
     } finally {
         await aFireEntityCreated(conn, entityMeta)
     }
 }
 
 export async function aFindOneById(conn: ExecuteContext, entityName: string,
-    id: any, options?: FindOption) {
+    id: any, oOrInclude?: FindOption | string[]): Promise<EntityValue | null> {
+
     const entityMeta = getEntityMeta(entityName)
 
-    options = options || {}
-    const includedFields = options.includedFields || []
+    id = parseId(id, entityMeta) // 确保 id 类型正确
 
-    const cacheId = id + "|" + options.repo + "|" + includedFields.join(",")
+    const o = ((_.isArray(oOrInclude)) ? {includedFields: oOrInclude}
+        : (oOrInclude || {})) as FindOption
+
+    const includedFields = o.includedFields || []
+
+    const cacheId = id + "|" + o.repo + "|" + includedFields.join(",")
     const criteria = {_id: id}
 
-    return aWithCache(entityMeta, ["Id", cacheId],
-        async() => {
-            if (entityMeta.db === DB.mysql)
-                return MysqlService.aFindOneByCriteria(conn,
-                    entityMeta, criteria, options)
-            else if (entityMeta.db === DB.mongo)
-                return MongoService.aFindOneByCriteria(entityMeta,
-                    criteria, options)
-        })
+    return aWithCache(entityMeta, ["Id", cacheId], async() =>
+        entityMeta.db === DB.mysql
+            ? MysqlServ.aFindOneByCriteria(conn, entityMeta, criteria, o)
+            : MongoServ.aFindOneByCriteria(entityMeta, criteria, o))
 }
 
 export async function aFindOneByCriteria(conn: ExecuteContext,
-    entityName: string, criteria: GenericCriteria, options?: FindOption) {
+    entityName: string, criteria: GenericCriteria,
+    oOrInclude?: FindOption | string[]): Promise<EntityValue | null> {
+
     const entityMeta = getEntityMeta(entityName)
 
-    let includedFields
-    if (_.isArray(options)) {
-        includedFields = options
-    } else {
-        options = options || {}
-        includedFields = options.includedFields || []
-    }
+    const o = ((_.isArray(oOrInclude)) ? {includedFields: oOrInclude}
+        : (oOrInclude || {})) as FindOption
+    const includedFields = o.includedFields || []
 
-    const cacheId = "OneByCriteria|" + options.repo + "|" + JSON.stringify(
+    const cacheId = "OneByCriteria|" + o.repo + "|" + JSON.stringify(
         criteria) + "|" + includedFields.join(",")
 
-    return aWithCache(entityMeta, ["Other", cacheId],
-        async() => {
-            if (entityMeta.db === DB.mysql)
-                return MysqlService.aFindOneByCriteria(conn,
-                    entityMeta, criteria, options)
-            else if (entityMeta.db === DB.mongo)
-                return MongoService.aFindOneByCriteria(entityMeta,
-                    criteria, options)
-        })
+    return aWithCache(entityMeta, ["Other", cacheId], async() =>
+        entityMeta.db === DB.mysql
+            ? MysqlServ.aFindOneByCriteria(conn, entityMeta, criteria, o)
+            : MongoServ.aFindOneByCriteria(entityMeta, criteria, o))
 }
 
 export async function aList(conn: ExecuteContext, entityName: string,
-    options: ListOption) {
+    options: ListOption): Promise<PagingListResult | EntityPage> {
     let { criteria, pageNo, sort } = options
     const { repo, pageSize, includedFields, withoutTotal} = options
     const entityMeta = getEntityMeta(entityName)
@@ -172,9 +164,8 @@ export async function aList(conn: ExecuteContext, entityName: string,
     const sortString = objectToKeyValuePairString(sort)
     const includedFieldsString = includedFields && includedFields.join(",")
 
-    const cacheId =
-        `List|${repo}|${pageNo}|${pageSize}|${criteriaString}|` +
-        `${sortString}|${includedFieldsString}`
+    const cacheId = `List|${repo}|${pageNo}|${pageSize}|${criteriaString}|`
+        + `${sortString}|${includedFieldsString}`
 
     // 不对，应该使用类似于 notInListInterface 之类的字段
     // if (!includedFields || includedFields.length === 0) {
@@ -184,48 +175,45 @@ export async function aList(conn: ExecuteContext, entityName: string,
     //         if (!fm.hideInListPage) includedFields.push(fn)
     //     }
     // }
+    const query = {
+        repo, entityMeta, criteria, includedFields,
+        sort, pageNo, pageSize, withoutTotal
+    }
 
-    return aWithCache(entityMeta, ["Other", cacheId],
-        async() => {
-            const query = {
-                repo,
-                entityMeta,
-                criteria,
-                includedFields,
-                sort,
-                pageNo,
-                pageSize,
-                withoutTotal
-            }
-            return entityMeta.db === DB.mysql
-                ? MysqlService.aList(conn, query)
-                : MongoService.aList(entityMeta, query)
-        })
+    return aWithCache(entityMeta, ["Other", cacheId], async() =>
+        entityMeta.db === DB.mysql
+            ? MysqlServ.aList(conn, query)
+            : MongoServ.aList(entityMeta, query))
 }
 
 export async function aFindManyByCriteria(conn: ExecuteContext,
-    entityName: string, options?: ListOption | string[])
-    : Promise<EntityValue[]> {
+    entityName: string, oOrInclude?: ListOption | string[])
+    : Promise<EntityPage> {
 
-    options = (_.isArray(options)) ? {includedFields: options} : (options || {})
-    options.pageSize = options.pageSize || -1
-    options.withoutTotal = true
+    const o = ((_.isArray(oOrInclude)) ? {includedFields: oOrInclude}
+        : (oOrInclude || {})) as ListOption
+    o.pageSize = o.pageSize || -1
+    o.withoutTotal = true
 
-    return aList(conn, entityName, options)
+    return aList(conn, entityName, o) as Promise<EntityPage>
 }
 
 export async function aFindManyByIds(conn: ExecuteContext, entityName: string,
-    ids: any[], options: ListOption): Promise<EntityValue[]> {
+    ids: any[], oOrInclude: ListOption | string[]): Promise<EntityPage> {
 
-    options = _.isArray(options) ? {includedFields: options} : (options || {})
+    const o = (_.isArray(oOrInclude) ? {includedFields: oOrInclude}
+        : (oOrInclude || {})) as ListOption
 
-    options.criteria = {
+    const entityMeta = getEntityMeta(entityName)
+    ids = ids.map(id => id && parseId(id, entityMeta)) // 确保 id 类型正确
+
+    o.criteria = {
         __type: "relation", field: "_id", operator: "in", value: ids
     }
-    options.pageSize = -1
-    options.withoutTotal = true
+    o.pageSize = -1
+    o.withoutTotal = true
 
-    return aList(conn, entityName, options)
+    return aList(conn, entityName, o) as Promise<EntityPage>
 }
 
 export async function aWithTransaction<T>(entityMeta: EntityMeta,

@@ -4,6 +4,7 @@ import * as crypto from "crypto"
 import * as _ from "lodash"
 import  mongodb = require("mongodb")
 import Config from "./Config"
+import { SystemError } from "./Errors"
 import { extension } from "./Extension"
 import { aReadJSON, aWriteJSON } from "./FileUtil"
 import { logSystemError, logSystemInfo } from "./Log"
@@ -128,7 +129,7 @@ export function parseListQueryValue(criteria: GenericCriteria,
 
 // 将 HTTP 输入的字段值规范化，value 可以是数组
 export function parseFieldValue(value: any, fieldMeta?: FieldMeta): any {
-    if (!fieldMeta) return undefined // TODO 异常处理
+    if (!fieldMeta) throw new SystemError("NoFieldMeta", "")
     // null / undefined 语义不同
     if (_.isNil(value)) return value // null/undefined 原样返回
 
@@ -213,7 +214,7 @@ export function parseIds(ids: string[], entityMeta: string | EntityMeta) {
     return list
 }
 
-export function formatFieldToHttp(fieldValue: any, fieldMeta: FieldMeta) {
+export function formatFieldToHttp(fieldValue: any, fieldMeta: FieldMeta): any {
     if (!fieldValue) return fieldValue
 
     if (isDateOrTimeType(fieldMeta.type))
@@ -231,7 +232,7 @@ export function formatFieldToHttp(fieldValue: any, fieldMeta: FieldMeta) {
 
         if (fieldMeta.multiple)
             return _.map(fieldValue, i =>
-                formatEntityToHttp(i, refEntityMeta))
+                i && formatEntityToHttp(i, refEntityMeta))
         else
             return formatEntityToHttp(fieldValue, refEntityMeta)
     } else if (fieldMeta.type === "Reference")
@@ -242,9 +243,8 @@ export function formatFieldToHttp(fieldValue: any, fieldMeta: FieldMeta) {
         return fieldValue
 }
 
-export function formatEntityToHttp(entityValue: EntityValue | null | undefined,
+export function formatEntityToHttp(entityValue: EntityValue,
     entityMeta: EntityMeta) {
-    if (!entityValue) return entityValue
 
     const output: EntityValue = {}
 

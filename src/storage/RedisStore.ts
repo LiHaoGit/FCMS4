@@ -1,4 +1,6 @@
 import * as redis from "redis"
+
+import Config from "../Config"
 import { logSystemError, logSystemInfo } from "../Log"
 
 export type AsyncMessageHandler = (message: string) => Promise<any>
@@ -56,7 +58,7 @@ export class AsyncRedisClient {
     client: redis.RedisClient
 
     constructor() {
-        this.client = redis.createClient() // TODO redis config
+        this.client = redis.createClient(Config.redis)
     }
 
     subscribeAsync(args1: string, args2: string) {

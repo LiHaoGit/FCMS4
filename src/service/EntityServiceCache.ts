@@ -1,13 +1,12 @@
 import * as _ from "lodash"
 import * as mongodb from "mongodb"
 import { aGetObject, aSetObject, aUnset } from "../cache/Cache"
-// const sizeof = require('object-sizeof')
 import { logSystemError, logSystemInfo } from "../Log"
 
 // 缓存分两类：1、byIdCache：根据 ID 查询单个实体。2、otherCache：其他，包括根据非 ID 查询单个实体。
 // 增删改三个操作。增不影响 byIdCache；删和改影响指定 ID 的 byIdCache；
 // 但增可能影响所有 otherCache。比如我们查询最新插入一个的实体，新增会导致缓存失效。更新、删除类似。
-// TODO 其实还有一个"根据多个ID查询"。增不影响。修改、删除时检查被操作的ID是否在这些ID中，不在就不需要删除缓存。
+// TODO 其实还有一个"根据多个ID查询"。增不影响。修改、删除时检查被操作的 ID 是否在这些 ID 中，不在就不需要删除缓存。
 
 export type EntityCreatedListener = (ctx: ExecuteContext, em: EntityMeta)
     => void

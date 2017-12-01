@@ -155,7 +155,8 @@ export async function aFindOneByCriteria(entityMeta: EntityMeta,
 }
 
 // sort 为 mongo 原生格式
-export async function aList(entityMeta: EntityMeta, options: ListOption) {
+export async function aList(entityMeta: EntityMeta, options: ListOption)
+    : Promise<PagingListResult | EntityPage> {
     const {
         criteria, sort, repo, includedFields, withoutTotal
     } = options
@@ -177,7 +178,7 @@ export async function aList(entityMeta: EntityMeta, options: ListOption) {
         return page
     } else {
         const total = await c.count(nativeCriteria)
-        return {total, page}
+        return {total, page, pageNo, pageSize}
     }
 }
 

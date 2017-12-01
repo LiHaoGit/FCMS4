@@ -17,6 +17,7 @@ const DEFAULT_CONFIG = {
         name: "main",
         url: "mongodb://localhost:27017/demo"
     }],
+    redis: {},
     passwordFormat: /^([a-zA-Z0-9]){8,20}$/,
     fileDir: "",
     fileDownloadPrefix: "/r/",

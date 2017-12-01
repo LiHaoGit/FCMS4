@@ -254,15 +254,12 @@ export async function _aList(ctx: koa.Context, entityName: string,
 
     const r = await aWithoutTransaction(entityMeta, async conn =>
         aInterceptList(entityName, conn, lq, operator, async() =>
-            aListService(conn, entityName, lq)))
+            aListService(conn, entityName, lq))) as PagingListResult
 
     const page = r.page
     removeNotShownFields(entityMeta, ctx.state.user, ...page)
 
     r.page = _.map(page, i => formatEntityToHttp(i, entityMeta))
-
-    r.pageNo = lq.pageNo
-    r.pageSize = lq.pageSize
 
     return r
 }
@@ -393,7 +390,7 @@ export async function aRemoveFilters(ctx: koa.Context) {
 
 // 过滤掉不显示的字段
 export function removeNotShownFields(entityMeta: EntityMeta, user: any,
-    ...entities: EntityValue[]) {
+    ...entities: (EntityValue | null)[]) {
     if (!(entities && entities.length)) return
 
     const fields = entityMeta.fields

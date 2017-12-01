@@ -137,3 +137,12 @@ interface Extension {
 interface CreateResult {
     id: any
 }
+
+type EntityPage = EntityValue[]
+
+interface PagingListResult {
+    pageNo: number
+    pageSize: number
+    total: number
+    page: EntityPage
+}
