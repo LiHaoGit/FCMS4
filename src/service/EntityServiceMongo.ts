@@ -155,9 +155,9 @@ export async function aFindOneByCriteria(entityMeta: EntityMeta,
 }
 
 // sort 为 mongo 原生格式
-export async function aList(options: ListOption) {
+export async function aList(entityMeta: EntityMeta, options: ListOption) {
     const {
-        entityMeta, criteria, sort, repo, includedFields, withoutTotal
+        criteria, sort, repo, includedFields, withoutTotal
     } = options
     const collectionName = getCollectionName(entityMeta, repo)
     const nativeCriteria = toMongoCriteria(criteria)

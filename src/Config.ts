@@ -3,6 +3,7 @@ const originConfigs: {[origin: string]: any} = {}
 const clients: any = {}
 
 const DEFAULT_CONFIG = {
+    metaFile: "",
     serverPort: 8090,
     cookieKey: "xxx",
     serverPugPath: "",

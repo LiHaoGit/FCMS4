@@ -216,3 +216,15 @@ export function firstValueOfObject(object: any) {
     }
     return null
 }
+
+export function entityListToIdMap(list: EntityValue[]) {
+    const map: {[k: string]: EntityValue} = {}
+    for (const i of list) map[i._id] = i
+    return map
+}
+
+export function listToMap(list: EntityValue[], keyField: string) {
+    const map: {[k: string]: EntityValue}  = {}
+    for (const i of list) map[i[keyField]] = i
+    return map
+}

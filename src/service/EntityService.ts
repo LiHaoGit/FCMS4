@@ -1,3 +1,4 @@
+// cSpell:words repo
 
 import * as _ from "lodash"
 import * as mongodb from "mongodb"
@@ -198,17 +199,15 @@ export async function aList(conn: ExecuteContext, entityName: string,
             }
             return entityMeta.db === DB.mysql
                 ? MysqlService.aList(conn, query)
-                : MongoService.aList(query)
+                : MongoService.aList(entityMeta, query)
         })
 }
 
 export async function aFindManyByCriteria(conn: ExecuteContext,
-    entityName: string, options?: ListOption | string[]) {
-    const entityMeta = getEntityMeta(entityName)
+    entityName: string, options?: ListOption | string[])
+    : Promise<EntityValue[]> {
 
-    options = (_.isArray(options))
-        ? {entityMeta, includedFields: options}
-        : (options || {entityMeta})
+    options = (_.isArray(options)) ? {includedFields: options} : (options || {})
     options.pageSize = options.pageSize || -1
     options.withoutTotal = true
 
@@ -216,12 +215,9 @@ export async function aFindManyByCriteria(conn: ExecuteContext,
 }
 
 export async function aFindManyByIds(conn: ExecuteContext, entityName: string,
-    ids: any[], options: ListOption) {
-    const entityMeta = getEntityMeta(entityName)
+    ids: any[], options: ListOption): Promise<EntityValue[]> {
 
-    options = _.isArray(options)
-        ? {includedFields: options, entityMeta}
-        : (options || {entityMeta})
+    options = _.isArray(options) ? {includedFields: options} : (options || {})
 
     options.criteria = {
         __type: "relation", field: "_id", operator: "in", value: ids

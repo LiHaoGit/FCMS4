@@ -50,3 +50,16 @@ export async function aReadJSON(file: string) {
         })
     })
 }
+
+export async function aWriteJSON(file: string, obj: any) {
+    const str = JSON.stringify(obj, null, 4)
+    return new Promise((resolve, reject) => {
+        fs.writeFile(file, str, (err => {
+            if (err) {
+                reject(err)
+                return
+            }
+            resolve(true)
+        }))
+    })
+}

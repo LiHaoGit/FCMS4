@@ -268,7 +268,7 @@ export async function _aList(ctx: koa.Context, entityName: string,
 }
 
 export function parseListQuery(entityMeta: EntityMeta, query: any): ListOption {
-    if (!query) return {entityMeta}
+    if (!query) return {}
     let criteria, sort
     let includedFields = splitString(query._includedFields, ",") || undefined
 
@@ -349,7 +349,7 @@ export function parseListQuery(entityMeta: EntityMeta, query: any): ListOption {
     }
 
     return {
-        entityMeta, pageNo, pageSize,
+        pageNo, pageSize,
         repo: query._repo, criteria, includedFields, sort
     }
 }

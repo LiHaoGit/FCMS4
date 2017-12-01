@@ -4,9 +4,9 @@ import * as crypto from "crypto"
 import * as _ from "lodash"
 import  mongodb = require("mongodb")
 import Config from "./Config"
-import { logSystemInfo } from "./Log"
+import { aReadJSON, aWriteJSON } from "./FileUtil"
+import { logSystemError, logSystemInfo } from "./Log"
 import { getMainStore, stringToObjectIdSilently } from "./storage/MongoStore"
-import { aPublish, subscribe } from "./storage/RedisStore"
 import { dateToLong, longToDate, stringToBoolean, stringToFloat,
     stringToInt } from "./Util"
 
@@ -62,20 +62,12 @@ export function getMetaForFront() {
 }
 
 export async function aLoad(extraEntities: {[k: string]: EntityMeta}) {
-    subscribe("MetaChange", async function(metaStoreId) {
-        if (metaStoreId !== MetaStoreId) return
-        logSystemInfo("MetaChanged")
-        await aLoad({})
-    })
-
-    const db = await getMainStore().aDatabase()
-
-    const c = db.collection("F_EntityMeta")
-    const entitiesList = await c.find({}).toArray()
-
-    // 下面没有异步操作
-    entities = {}
-    for (const e of entitiesList) entities[e.name] = e
+    try {
+        entities = await aReadJSON(Config.metaFile) as any
+    } catch (e) {
+        logSystemError("No Meta File")
+        entities = {}
+    }
 
     initSystemMeta(extraEntities)
     Object.assign(entities, SystemEntities)
@@ -86,17 +78,10 @@ export async function aLoad(extraEntities: {[k: string]: EntityMeta}) {
 export async function aSaveEntityMeta(entityName: string,
     entityMeta: EntityMeta) {
     entityMeta._modifiedOn = new Date()
-    delete entityMeta._version
-
-    const db = await getMainStore().aDatabase()
-    const c = db.collection("F_EntityMeta")
-
-    await c.updateOne({name: entityName},
-        {$set: entityMeta, $inc: {_version: 1}}, {upsert: true})
 
     entities[entityName] = entityMeta
 
-    await aPublish("MetaChange", MetaStoreId)
+    await aWriteJSON(Config.metaFile, entities)
 }
 
 export async function aRemoveEntityMeta(entityName: string) {
@@ -106,7 +91,7 @@ export async function aRemoveEntityMeta(entityName: string) {
 
     delete entities[entityName]
 
-    await aPublish("MetaChange", MetaStoreId)
+    await aWriteJSON("../meta.json", entities)
 }
 
 // 将 HTTP 输入的实体或组件值规范化

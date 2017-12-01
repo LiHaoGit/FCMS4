@@ -98,8 +98,7 @@ interface FindOption {
 }
 
 interface ListOption {
-    entityMeta: EntityMeta
-    criteria?:GenericCriteria
+    criteria?: GenericCriteria
     sort?: {[k:string]: number}
     repo?:string
     includedFields?: string[]
