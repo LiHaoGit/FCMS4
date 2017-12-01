@@ -193,7 +193,7 @@ export async function aRecoverInBatch(ctx: koa.Context) {
 }
 
 export async function aFindOneById(ctx: koa.Context) {
-    const entity = await _aFindOneById(ctx,  ctx.state.params.entityName,
+    const entity = await _aFindOneById(ctx, ctx.state.params.entityName,
         ctx.state.params.id)
 
     if (entity) {
@@ -210,10 +210,7 @@ export async function _aFindOneById(ctx: koa.Context, entityName: string,
     if (!entityMeta) throw new UserError("NoSuchEntity")
 
     id = parseId(id, entityMeta)
-    if (!id) {
-        ctx.status = 404
-        return
-    }
+    if (!id) return null
 
     const operator = ctx.state.user
 
@@ -311,16 +308,12 @@ export function parseListQuery(entityMeta: EntityMeta, query: any): ListOption {
             for (const key in query) {
                 const value = query[key]
                 if (entityMeta.fields[key]) criteriaList.push({
-                    field: key,
-                    operator: "==",
-                    value
+                    field: key, operator: "==", value
                 })
             }
 
             criteria = criteriaList.length ? {
-                __type: "relation",
-                relation: "and",
-                items: criteriaList
+                __type: "relation", relation: "and", items: criteriaList
             } : null
         }
 
