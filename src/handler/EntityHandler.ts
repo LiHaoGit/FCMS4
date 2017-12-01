@@ -6,7 +6,8 @@ import { aClearAllCache } from "../cache/Cache"
 import { UserError } from "../Errors"
 import { formatEntityToHttp, getEntityMeta, parseEntity, parseId, parseIds,
     parseListQueryValue } from "../Meta"
-import { aCreate, aFindOneByCriteria, aList as aListService,
+import { aCreate, aFindOneByCriteria, aFindOneById as aFindOneByIdService,
+    aList as aListService,
     aRecoverMany, aRemoveManyByCriteria,
     aUpdateOneByCriteria,
     aWithoutTransaction, aWithTransaction } from "../service/EntityService"
@@ -220,7 +221,7 @@ export async function _aFindOneById(ctx: koa.Context, entityName: string,
 
     let entity = await aWithoutTransaction(entityMeta, async conn =>
         aInterceptGet(entityName, conn, criteria, operator, async() =>
-            aFindOneByCriteria(conn, entityName, criteria, {repo})))
+        aFindOneByIdService(conn, entityName, id, {repo})))
 
     if (entity) {
         removeNotShownFields(entityMeta, ctx.state.user, entity)
