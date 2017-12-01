@@ -1,12 +1,12 @@
 // cSpell:words Captcha
 import Chance = require("chance")
 import koa = require("koa")
-import simpleCaptcha = require("simple-captcha")
 import { aGetString, aSetString, aUnset } from "../cache/Cache"
 
 const chance = new Chance()
 
 export async function aGenerate(ctx: koa.Context) {
+    const simpleCaptcha = require("simple-captcha")
     const captcha = simpleCaptcha.create({width: 100, height: 40})
     const text = captcha.text()
     captcha.generate()

@@ -1,3 +1,4 @@
+import { ObjectID } from "bson"
 import * as koa from "koa"
 import _ = require("lodash")
 import mongodb = require("mongodb")
@@ -227,4 +228,9 @@ export function listToMap(list: EntityValue[], keyField: string) {
     const map: {[k: string]: EntityValue}  = {}
     for (const i of list) map[i[keyField]] = i
     return map
+}
+
+export function objectIdsEquals(a: ObjectID | null | undefined,
+    b: ObjectID | null | undefined) {
+    return _.isNull(a) && _.isNull(b) || a && b && a.toString() === b.toString()
 }

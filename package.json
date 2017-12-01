@@ -17,7 +17,6 @@
     "request": "^2.83.0",
     "request-promise-native": "^1.0.5",
     "server-destroy": "^1.0.1",
-    "simple-captcha": "^0.1.10",
     "@types/bluebird": "^3.5.18",
     "@types/bunyan": "^1.8.3",
     "@types/chance": "^0.7.35",
@@ -30,6 +29,9 @@
     "@types/redis": "^2.8.1",
     "@types/request-promise-native": "^1.0.10",
     "@types/server-destroy": "^1.0.0"
+  },
+  "optionalDependencies": {
+    "simple-captcha": "^0.1.10"
   },
   "devDependencies": {
     "gulp": "^3.9.1",

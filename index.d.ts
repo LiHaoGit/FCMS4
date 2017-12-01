@@ -135,5 +135,3 @@ interface Extension {
 interface CreateResult {
     id: any
 }
-
-declare module 'simple-captcha'
