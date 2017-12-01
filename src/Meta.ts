@@ -4,6 +4,7 @@ import * as crypto from "crypto"
 import * as _ from "lodash"
 import  mongodb = require("mongodb")
 import Config from "./Config"
+import { extension } from "./Extension"
 import { aReadJSON, aWriteJSON } from "./FileUtil"
 import { logSystemError, logSystemInfo } from "./Log"
 import { getMainStore, stringToObjectIdSilently } from "./storage/MongoStore"
@@ -268,7 +269,11 @@ export function hashPassword(password?: string | null) {
 }
 
 export function checkPasswordEquals(target: string, notSalted: string) {
-    return hashPassword(notSalted) === target
+    if (extension.checkPasswordEquals) {
+        return extension.checkPasswordEquals(target, notSalted)
+    } else {
+        return hashPassword(notSalted) === target
+    }
 }
 
 export function getCollectionName(entityMeta: EntityMeta,

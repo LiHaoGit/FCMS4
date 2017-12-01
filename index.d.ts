@@ -130,6 +130,8 @@ interface Extension {
     aSendSecurityCodeToEmail?: (toEmail: string, code: string) => void
     aSendSecurityCodeToPhone?: (toPhone: string, code: string) => void
     aKoaMiddlewareBeforeHandler?: () => void
+    checkPasswordEquals?: (target: string, notSalted: string) => boolean
+    [k: string]: any
 }
 
 interface CreateResult {

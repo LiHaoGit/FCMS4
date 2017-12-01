@@ -1,1 +1,2 @@
-export const extension: Extension = {}
+export const extension: Extension = {
+}
