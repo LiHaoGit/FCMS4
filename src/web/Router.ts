@@ -211,7 +211,7 @@ export class RouteRuleRegisters {
     }
 
     // 分别添加 List/Get/Create/Update 接口的路由
-    listGetCreateUpdate(urlPrefix: string, info: RouteInfo | null,
+    listGetCreateUpdate(urlPrefix: string, info: RouteConfig | null,
         handlers: koa.Middleware[], ...middlewares: koa.Middleware[]) {
         if (handlers[0])
             this.add("get", urlPrefix, info, ...middlewares, handlers[0])

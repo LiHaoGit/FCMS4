@@ -2,7 +2,7 @@
 
 import * as crypto from "crypto"
 import * as _ from "lodash"
-import  mongodb = require("mongodb")
+import mongodb = require("mongodb")
 import Config from "./Config"
 import { SystemError } from "./Errors"
 import { extension } from "./Extension"
