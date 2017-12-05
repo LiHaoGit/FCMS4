@@ -6,13 +6,31 @@ import * as mkdirp from "mkdirp"
 import * as path from "path"
 import { logSystemError } from "./Log"
 
-const pMakeDir = bluebird.promisify(mkdirp)
-
-export const pUnlink = bluebird.promisify(fs.unlink)
-
 const pRename = bluebird.promisify(fs.rename)
 
 const pStat = bluebird.promisify(fs.stat)
+
+export async function aRemoveFile(file: string) {
+    return new Promise((resolve, reject) => {
+        fs.unlink(file, err => {
+            if (err) {
+                reject(err)
+            }
+            resolve(true)
+        })
+    })
+}
+
+export async function aMakeDirRecursive(dirPath: string) {
+    return new Promise((resolve, reject) => {
+        mkdirp(dirPath, err => {
+            if (err) {
+                reject(err)
+            }
+            resolve(true)
+        })
+    })
+}
 
 export async function aMoveFileTo(oldName: string, newName: string) {
     const targetDir = path.dirname(newName)
@@ -24,7 +42,7 @@ export async function aMoveFileTo(oldName: string, newName: string) {
     }
 
     if (!(stats && stats.isDirectory()))
-        await pMakeDir(targetDir)
+        await aMakeDirRecursive(targetDir)
 
     await pRename(oldName, newName)
 }

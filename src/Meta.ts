@@ -257,7 +257,7 @@ export function formatEntityToHttp(entityValue: EntityValue,
     return output
 }
 
-export function formatEntitiesToHttp(entityValues: EntityMeta[],
+export function formatEntitiesToHttp(entityValues: EntityValue[],
     entityMeta: EntityMeta) {
     if (!(entityValues && entityValues.length)) return entityValues
     return _.map(entityValues, e => formatEntityToHttp(e, entityMeta))
