@@ -19,7 +19,6 @@ const entityRemovedListeners: EntityUpdatedListener[] = []
 
 export async function aWithCache(entityMeta: EntityMeta, cacheId: string[],
     aQuery: () => any) {
-    "use strict"
     const noServiceCache = entityMeta.noServiceCache
 
     if (noServiceCache) return aQuery()

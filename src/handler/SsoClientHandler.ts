@@ -2,7 +2,7 @@ import koa = require("koa")
 import rp = require("request-promise-native")
 import Config from "../Config"
 import { SystemError, UserError } from "../Errors"
-import { logSystemDebug } from "../Log"
+import { logSystemDebug, logSystemError } from "../Log"
 import { aSignInSuccessfully } from "../security/UserService"
 import { aFindOneById } from "../service/EntityService"
 import { setSingedPortedCookies } from "../Util"
@@ -43,8 +43,7 @@ export async function aAcceptToken(ctx: koa.Context) {
 
         ctx.redirect(callback)
     } catch (e) {
-        // 
-        console.log("error", e)
+        logSystemError(e, "aAcceptToken")
         throw e
     }
 }
