@@ -32,7 +32,7 @@ export async function aIdentifyUser(ctx: koa.Context, next: any) {
 
     const origin = ctx.request.origin
 
-    if (userId && userToken)
+    if (userId && userToken) {
         try {
             const user = await aAuthToken(origin, userId, userToken)
             // Log.debug('auth token: ', user)
@@ -40,6 +40,7 @@ export async function aIdentifyUser(ctx: koa.Context, next: any) {
         } catch (e) {
             return
         }
+    }
 
     await next()
 }
@@ -84,12 +85,13 @@ async function aCheckUserHasAction(user: any, action: string) {
     if (user.acl && user.acl.action && user.acl.action[action]) return true
 
     const roles = user.roles
-    if (roles)
+    if (roles) {
         for (const roleId of roles) {
             const role = await aRoleById(roleId)
             if (role && role.acl && role.acl.action && role.acl.action[action])
                 return true
         }
+    }
     return false
 }
 
@@ -132,7 +134,7 @@ async function aCheckUserHasEntityAction(user: any, action: string,
         if (entityAcl && (entityAcl["*"] || entityAcl[action])) return true
 
         const roles = user.roles
-        if (roles)
+        if (roles) {
             for (const roleId of roles) {
                 const role = await aRoleById(roleId)
                 if (role) {
@@ -142,6 +144,7 @@ async function aCheckUserHasEntityAction(user: any, action: string,
                         return true
                 }
             }
+        }
     } else {
         const role = await aGetAnonymousRole()
         if (role) {

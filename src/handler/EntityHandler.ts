@@ -268,7 +268,7 @@ export function parseListQuery(entityMeta: EntityMeta, query: any): ListOption {
     let includedFields = splitString(query._includedFields, ",") || undefined
 
     const digest = query._digest === "true"
-    if (digest)
+    if (digest) {
         if (entityMeta.digestFields) { // "username|email,admin"
             let fs: string[] = []
             const fields = entityMeta.digestFields.split(",")
@@ -277,6 +277,7 @@ export function parseListQuery(entityMeta: EntityMeta, query: any): ListOption {
         } else {
             includedFields = ["_id"]
         }
+    }
 
     const pageNo = stringToInt(query._pageNo, 1)
     let pageSize = stringToInt(query._pageSize, (digest && -1 || 20)) as number
@@ -359,12 +360,13 @@ export async function aSaveFilters(ctx: koa.Context) {
 
     const lf = await aFindOneByCriteria({}, "F_ListFilters", criteria,
         {includedFields})
-    if (lf)
+    if (lf) {
         await aUpdateOneByCriteria({}, "F_ListFilters", {
             _id: lf._id, _version: lf._version
         }, instance)
-    else
+    } else {
         await aCreate({}, "F_ListFilters", instance)
+    }
 
     ctx.status = 204
 }
@@ -392,9 +394,9 @@ export function removeNotShownFields(entityMeta: EntityMeta, user: any,
     const removedFieldNames = []
     for (const fieldName in fields) {
         const fieldMeta = fields[fieldName]
-        if (fieldMeta.type === "Password")
+        if (fieldMeta.type === "Password") {
             removedFieldNames.push(fieldName)
-        else if (fieldMeta.notShow &&
+        } else if (fieldMeta.notShow &&
             !isUserOrRoleHasFieldAction(user, entityMeta.name, fieldName,
                 "show")) {
             removedFieldNames.push(fieldName)

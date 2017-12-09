@@ -15,6 +15,7 @@ export async function aRemoveFile(file: string) {
         fs.unlink(file, err => {
             if (err) {
                 reject(err)
+                return
             }
             resolve(true)
         })
@@ -26,6 +27,7 @@ export async function aMakeDirRecursive(dirPath: string) {
         mkdirp(dirPath, err => {
             if (err) {
                 reject(err)
+                return
             }
             resolve(true)
         })

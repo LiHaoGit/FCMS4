@@ -2,9 +2,9 @@ import cluster = require("cluster")
 import Config from "./Config"
 
 export function use(f: () => void) {
-    if (!Config.cluster)
+    if (!Config.cluster) {
         f()
-    else {
+    } else {
         const workerNum = Config.workerNum
 
         if (cluster.isMaster) {

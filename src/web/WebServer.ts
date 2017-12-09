@@ -82,9 +82,9 @@ function configKoaServer(router: Router) {
 async function aCatchError(ctx: Koa.Context, next: any) {
     const routeInfo = (ctx.state.route.info || {}) as RouteInfo
     const aErrorCatcher = routeInfo.aErrorCatcher
-    if (aErrorCatcher)
+    if (aErrorCatcher) {
         await aErrorCatcher(ctx, next)
-    else
+    } else {
         try {
             await next()
         } catch (e) {
@@ -109,4 +109,5 @@ async function aCatchError(ctx: Koa.Context, next: any) {
                 logSystemError(e, e.message, "catch all")
             }
         }
+    }
 }

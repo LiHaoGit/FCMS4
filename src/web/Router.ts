@@ -173,10 +173,11 @@ export class RouteRuleRegisters {
     add(method: string, url: string, cfg: RouteConfig | null,
         ...handlers: koa.Middleware[]) {
         // 去掉 url 开头的斜线
-        if (url === "" || url === "/")
+        if (url === "" || url === "/") {
             url = ""
-        else if (url[0] === "/")
+        } else if (url[0] === "/") {
             url = url.substring(1)
+        }
 
         url = this.urlPrefix + "/" + url
 

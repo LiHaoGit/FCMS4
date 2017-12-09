@@ -28,9 +28,8 @@ export async function aAcceptToken(ctx: koa.Context) {
     try {
         const res = await rp(options)
         logSystemDebug("res", res)
-        if (!res)
-            throw new SystemError("ValidateTokenFail",
-                "Failed to Validate Token")
+        if (!res) throw new SystemError("ValidateTokenFail",
+            "Failed to Validate Token")
 
         const userId = res.userId
         const user = await aFindOneById({}, "F_User", userId)
