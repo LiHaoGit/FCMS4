@@ -1,7 +1,10 @@
 // cSpell:words CKEDITOR
 
+
 import koa = require("koa")
+import moment = require("moment")
 import Path = require("path")
+
 import Config from "../Config"
 import { UserError } from "../Errors"
 import { aMoveFileTo } from "../FileUtil"
@@ -15,7 +18,8 @@ export interface File {
 
 // H5上传
 export async function aUpload(ctx: koa.Context) {
-    const result = await aDoUpload(ctx.request.body.files, ctx.query)
+    const result = await aUploadForEntityField(ctx.request.body.files,
+        ctx.query)
 
     if (result)
         ctx.body = result
@@ -25,7 +29,8 @@ export async function aUpload(ctx: koa.Context) {
 
 // Transport 上传
 export async function aUpload2(ctx: koa.Context) {
-    let result = await aDoUpload(ctx.request.body.files, ctx.query) as any
+    let result = await aUploadForEntityField(ctx.request.body.files,
+        ctx.query) as any
     if (result)
         result.success = true
     else
@@ -76,47 +81,55 @@ export async function aUploadImageForCkEditor(ctx: koa.Context) {
 }
 
 export async function aUploadUtil(file: File, subDir: string) {
-    const fileTargetDir = Path.join(Config.fileDir, subDir)
+    const fileRelativePath = generateRelativePath(subDir,
+        Path.extname(file.path))
 
-    const fileSize = file.size
+    await aMoveFileTo(file.path, Path.join(Config.fileDir, fileRelativePath))
 
-    const fileFinalFullPath = Path.join(fileTargetDir,
-        newObjectId().toString() + Path.extname(file.path))
-    await aMoveFileTo(file.path, fileFinalFullPath)
-
-    const fileRelativePath = Path.relative(Config.fileDir, fileFinalFullPath)
-
-    return {fileRelativePath, fileSize}
+    return {fileRelativePath, fileSize:  file.size}
 }
 
-async function aDoUpload(files: {[k: string]: File}, query: any) {
+async function aUploadForEntityField(files: {[k: string]: File}, query: any) {
     if (!files) return null
 
-    const fileKey = Object.keys(files)[0]
+    const fileKey = Object.keys(files)[0] // 只上传第一个文件
     if (!fileKey) return null
     const file = files[fileKey]
 
     const entityName = query.entityName
     const fieldName = query.fieldName
 
-    if (!(entityName && fieldName)) return false
+    if (!(entityName && fieldName)) return null
 
     const entityMeta = getEntityMeta(entityName)
-    if (!entityMeta)
-        throw new UserError("NoSuchEntity", "无此实体 " + entityName)
+    if (!entityMeta) throw new UserError("NoSuchEntity",
+        `无此实体 ${entityName}`)
     const fieldMeta = entityMeta.fields[fieldName]
-    if (!fieldMeta)
-        throw new UserError("NoSuchEntityField",
-            `无此字段 ${entityName}.${fieldName}`)
+    if (!fieldMeta) throw new UserError("NoSuchEntityField",
+        `无此字段 ${entityName}.${fieldName}`)
 
     const subDir = fieldMeta.fileStoreDir || "default"
-    const fileTargetDir = Path.join(Config.fileDir, subDir)
+    const fileRelativePath = generateRelativePath(subDir,
+        Path.extname(file.path))
 
-    const fileFinalFullPath = Path.join(fileTargetDir,
-        newObjectId().toString() + Path.extname(file.path))
-    await aMoveFileTo(file.path, fileFinalFullPath)
-
-    const fileRelativePath = Path.relative(Config.fileDir, fileFinalFullPath)
+    await aMoveFileTo(file.path, Path.join(Config.fileDir, fileRelativePath))
 
     return {fileRelativePath, fileSize: file.size}
+}
+
+// timeSlice: 是否要前缀时间分片的目录
+function generateRelativePath(parentPath: string, extName: string,
+    noTimeSlice?: boolean) {
+
+    if (extName && extName[0] !== ".") extName = "." + extName
+    const basenameWithExt = newObjectId().toString() + extName
+
+    if (!noTimeSlice) {
+        const m = moment()
+        const ym = m.format("YYYY-MM")
+        const d = m.date()
+        parentPath = Path.join(parentPath, ym, d.toString())
+    }
+
+    return Path.join(parentPath, basenameWithExt)
 }
