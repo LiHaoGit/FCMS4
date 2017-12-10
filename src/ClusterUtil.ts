@@ -5,7 +5,7 @@ export function use(f: () => void) {
     if (!Config.cluster) {
         f()
     } else {
-        const workerNum = Config.workerNum
+        const workerNum = Config.workerNum || 2
 
         if (cluster.isMaster) {
             console.log(`Master ${process.pid} is running`)

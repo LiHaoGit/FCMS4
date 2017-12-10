@@ -21,18 +21,22 @@ let webStarted = false
 
 moment.locale("zh-cn")
 
-export async function aStart(appConfig: any,
+export async function aStart(appConfig: IConfig,
     addRouteRules: (router: Router) => void,
     extraEntities: {[k: string]: EntityMeta}) {
+
+    console.log("--- Starting FCMS")
 
     process.on("SIGINT", onProcessTerm)
     process.on("SIGTERM", onProcessTerm)
 
     try {
         Object.assign(Config, appConfig)
+
+        Config.preprocess()
+
         configLoggers(Config.logConfigs)
 
-        console.log("---")
         logSystemInfo("Starting FCMS...")
 
         // 持久层初始化
@@ -76,8 +80,11 @@ export async function aStart(appConfig: any,
 }
 
 function stop() {
-    return aStop().catch(function(e) {
+    return aStop().then(function() {
+        process.exitCode = 0
+    }).catch(function(e) {
         logSystemError(e, "stop")
+        process.exitCode = 1
     })
 }
 

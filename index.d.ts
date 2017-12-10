@@ -146,3 +146,59 @@ interface PagingListResult {
     total: number
     page: EntityPage
 }
+
+interface MongoDBConfig {
+    name: string
+    url: string
+}
+interface SSOServerClient {
+    acceptTokenUrl: string
+    key: string
+}
+
+interface SSOServerConfig {
+    clients: {[origin: string]: SSOServerClient}
+}
+
+interface OriginConfigItem {
+    description?: string
+    ssoServer: string
+    defaultCallbackUrl: string
+    ssoKey: string
+}
+
+interface OriginConfig {
+    [origin: string]: OriginConfigItem
+}
+
+interface SubApp {
+    label: string
+    origins: string[]
+}
+
+interface IConfig {
+    metaFile: string
+    serverPort: number
+    cookieKey: string
+    serverPugPath: string
+    uploadPath: string
+    httpBodyMaxFieldsSize: number
+    fileDefaultMaxSize: number
+    imageDefaultMaxSize: number
+    sessionExpireAtServer: number
+    usernameFields: string[]
+    mongoDatabases: MongoDBConfig[]
+    redis: any
+    passwordFormat: RegExp
+    fileDir: string
+    fileDownloadPrefix: string
+    cluster?: boolean
+    workerNum?: number
+    sso?: string
+    subApps?: SubApp[]
+    ssoServer: SSOServerConfig
+    originConfigs: OriginConfig
+    logConfigs: any
+    errorCatcher: WebErrorCatcher | null
+    preprocess: ()=>void
+}
