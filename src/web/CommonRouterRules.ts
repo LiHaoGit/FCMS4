@@ -106,8 +106,6 @@ export function addCommonRouteRules(router: Router) {
         EntityHandler.aUpdateEntityInBatch)
     rrr.del("/entity/:entityName", {authEntity: "removeEntity"},
         EntityHandler.aDeleteEntityInBatch)
-    rrr.post("/entity/:entityName/recover", {authEntity: "recoverEntity"},
-        EntityHandler.aRecoverInBatch)
 
     rrr.put("/entity/filters", {action: "PreFilters"},
         EntityHandler.aSaveFilters)

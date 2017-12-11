@@ -97,19 +97,6 @@ export async function aRemoveManyByCriteria(conn: ExecuteContext,
     }
 }
 
-export async function aRecoverMany(conn: ExecuteContext, entityName: string,
-    ids: any[]) {
-    const entityMeta = getEntityMeta(entityName)
-
-    try {
-        return entityMeta.db === DB.mysql
-            ? MysqlServ.aRecoverMany(conn, entityMeta, ids)
-            : MongoServ.aRecoverMany(entityMeta, ids)
-    } finally {
-        await aFireEntityCreated(conn, entityMeta)
-    }
-}
-
 export async function aFindOneById(conn: ExecuteContext, entityName: string,
     id: any, oOrInclude?: FindOption | string[]): Promise<EntityValue | null> {
 
@@ -122,7 +109,7 @@ export async function aFindOneById(conn: ExecuteContext, entityName: string,
 
     const includedFields = o.includedFields || []
 
-    const cacheId = id + "|" + o.repo + "|" + includedFields.join(",")
+    const cacheId = `${id}|${includedFields.join(",")}`
     const criteria = {_id: id}
 
     return aWithCache(entityMeta, ["Id", cacheId], async() =>
@@ -141,8 +128,8 @@ export async function aFindOneByCriteria(conn: ExecuteContext,
         : (oOrInclude || {})) as FindOption
     const includedFields = o.includedFields || []
 
-    const cacheId = "OneByCriteria|" + o.repo + "|" + JSON.stringify(
-        criteria) + "|" + includedFields.join(",")
+    const cacheId = "OneByCriteria|" + JSON.stringify(criteria)
+        + "|" + includedFields.join(",")
 
     return aWithCache(entityMeta, ["Other", cacheId], async() =>
         entityMeta.db === DB.mysql
@@ -153,7 +140,7 @@ export async function aFindOneByCriteria(conn: ExecuteContext,
 export async function aList(conn: ExecuteContext, entityName: string,
     options: ListOption): Promise<PagingListResult | EntityPage> {
     let { criteria, pageNo, sort } = options
-    const { repo, pageSize, includedFields, withoutTotal} = options
+    const { pageSize, includedFields, withoutTotal} = options
     const entityMeta = getEntityMeta(entityName)
 
     if (!pageNo || pageNo < 1) pageNo = 1
@@ -164,7 +151,7 @@ export async function aList(conn: ExecuteContext, entityName: string,
     const sortString = objectToKeyValuePairString(sort)
     const includedFieldsString = includedFields && includedFields.join(",")
 
-    const cacheId = `List|${repo}|${pageNo}|${pageSize}|${criteriaString}|`
+    const cacheId = `List|${pageNo}|${pageSize}|${criteriaString}|`
         + `${sortString}|${includedFieldsString}`
 
     // 不对，应该使用类似于 notInListInterface 之类的字段
@@ -176,7 +163,7 @@ export async function aList(conn: ExecuteContext, entityName: string,
     //     }
     // }
     const query = {
-        repo, entityMeta, criteria, includedFields,
+        entityMeta, criteria, includedFields,
         sort, pageNo, pageSize, withoutTotal
     }
 

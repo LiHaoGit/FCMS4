@@ -54,7 +54,6 @@ interface EntityMeta {
     digestFields?: string
     editEnhanceFunc?: string
     noServiceCache?: boolean
-    removeMode?: string
     noCreate?: boolean
     noDelete?: boolean
     noEdit?: boolean
@@ -91,7 +90,6 @@ interface UpdateOption {
 }
 
 interface FindOption {
-    repo?: string
     includedFields?: string[]
     pageSize?: number,
     withoutTotal?: boolean
@@ -100,7 +98,6 @@ interface FindOption {
 interface ListOption {
     criteria?: GenericCriteria
     sort?: {[k:string]: number}
-    repo?:string
     includedFields?: string[]
     pageNo?: number
     pageSize?: number

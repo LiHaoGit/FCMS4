@@ -7,9 +7,7 @@ import { UserError } from "../Errors"
 import { formatEntityToHttp, getEntityMeta, parseEntity, parseId, parseIds,
     parseListQueryValue } from "../Meta"
 import { aCreate, aFindOneByCriteria, aFindOneById as aFindOneByIdService,
-    aList as aListService,
-    aRecoverMany, aRemoveManyByCriteria,
-    aUpdateOneByCriteria,
+    aList as aListService, aRemoveManyByCriteria, aUpdateOneByCriteria,
     aWithoutTransaction, aWithTransaction } from "../service/EntityService"
 import { isUserOrRoleHasFieldAction, splitString,
     stringToBoolean, stringToInt } from "../Util"
@@ -174,25 +172,6 @@ export async function aDeleteEntityInBatch(ctx: koa.Context) {
     ctx.status = 204
 }
 
-export async function aRecoverInBatch(ctx: koa.Context) {
-    const entityName = ctx.state.params.entityName
-    const entityMeta = getEntityMeta(entityName)
-
-    if (!entityMeta) throw new UserError("NoSuchEntity")
-
-    const req = ctx.request.body || {}
-    let ids = req.ids
-    if (!(ids && ids.length > 0)) throw new UserError("EmptyOperation")
-
-    ids = parseIds(ids, entityMeta)
-    if (!(ids.length > 0)) throw new UserError("EmptyOperation")
-
-    await aWithTransaction(entityMeta, async conn =>
-        aRecoverMany(conn, entityName, ids))
-
-    ctx.status = 204
-}
-
 export async function aFindOneById(ctx: koa.Context) {
     const entity = await _aFindOneById(ctx, ctx.state.params.entityName,
         ctx.state.params.id)
@@ -217,11 +196,9 @@ export async function _aFindOneById(ctx: koa.Context, entityName: string,
 
     const criteria = {_id: id}
 
-    const repo = ctx.query && ctx.query._repo
-
     let entity = await aWithoutTransaction(entityMeta, async conn =>
         aInterceptGet(entityName, conn, criteria, operator, async() =>
-        aFindOneByIdService(conn, entityName, id, {repo})))
+        aFindOneByIdService(conn, entityName, id, {})))
 
     if (entity) {
         removeNotShownFields(entityMeta, ctx.state.user, entity)
@@ -340,10 +317,7 @@ export function parseListQuery(entityMeta: EntityMeta, query: any): ListOption {
         sort = {[sortBy]: sortOrder}
     }
 
-    return {
-        pageNo, pageSize,
-        repo: query._repo, criteria, includedFields, sort
-    }
+    return { pageNo, pageSize, criteria, includedFields, sort }
 }
 
 export async function aSaveFilters(ctx: koa.Context) {

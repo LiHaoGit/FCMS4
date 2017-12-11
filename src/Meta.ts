@@ -276,15 +276,6 @@ export function checkPasswordEquals(target: string, notSalted: string) {
     }
 }
 
-export function getCollectionName(entityMeta: EntityMeta,
-    repo?: string | null) {
-    const tableName = entityMeta.tableName || entityMeta.name
-    if (repo === "trash")
-        return tableName + "_trash"
-    else
-        return tableName
-}
-
 export function newObjectId(): mongodb.ObjectId {
     return new mongodb.ObjectId()
 }

@@ -5,7 +5,7 @@ import * as mongodb from "mongodb"
 
 import { UniqueConflictError } from "../Errors"
 import { logSystemWarn } from "../Log"
-import { getCollectionName, newObjectId } from "../Meta"
+import { newObjectId } from "../Meta"
 import { getInsertedIdObject, getStore, getUpdateResult,
     isIndexConflictError, toMongoCriteria } from "../storage/MongoStore"
 import { arrayToTrueObject } from "../Util"
@@ -77,74 +77,14 @@ export async function aRemoveManyByCriteria(entityMeta: EntityMeta,
     criteria: GenericCriteria) {
     const nativeCriteria = toMongoCriteria(criteria)
 
-    if (entityMeta.removeMode === "toTrash")
-        return aRemoveManyToTrash(entityMeta, nativeCriteria)
-    else
-        return aRemoveManyCompletely(entityMeta, nativeCriteria)
-}
-
-// 软删除有几种方式：放在单独的表中，放在原来的表中+使用标记字段。
-// 放在单独的表中，在撤销删除后，有id重复的风险：例如删除id为1的实体，其后又产生了id为1的实体，则把删除的实体找回后就主键冲突了
-// 好在目前采用ObjectId的方式不会导致该问题。
-// 放在原表加标记字段的方式，使得所有的查询都要记得查询删除标记为false的实体，并影响索引的构建，麻烦
-
-async function aRemoveManyToTrash(entityMeta: EntityMeta,
-    criteria: MongoCriteria) {
-    const trashTable = getCollectionName(entityMeta, "trash")
-
-    const db = await getStore(entityMeta.dbName || "main").aDatabase()
-    const formalCollection = db.collection(entityMeta.tableName ||
-        entityMeta.name)
-    const trashCollection = db.collection(trashTable)
-
-    const list = await formalCollection.find(criteria).toArray()
-
-    for (const entity of list) {
-        entity._modifiedOn = new Date()
-        entity._version++
-    }
-
-    await trashCollection.insertMany(list)
-    await formalCollection.deleteMany(criteria)
-}
-
-async function aRemoveManyCompletely(entityMeta: EntityMeta,
-    criteria: MongoCriteria) {
     const db = await getStore(entityMeta.dbName || "main").aDatabase()
     const c = db.collection(entityMeta.tableName || entityMeta.name)
-    await c.deleteMany(criteria)
-}
-
-export async function aRecoverMany(entityMeta: EntityMeta,
-    ids: any[]) {
-    const trashTable = getCollectionName(entityMeta, "trash")
-
-    const db = await getStore(entityMeta.dbName || "main").aDatabase()
-    const formalCollection = db.collection(entityMeta.tableName ||
-        entityMeta.name)
-    const trashCollection = db.collection(trashTable)
-
-    const list = await trashCollection.find({_id: {$in: ids}}).toArray()
-
-    for (const entity of list) {
-        entity._modifiedOn = new Date()
-        entity._version++
-    }
-
-    try {
-        await formalCollection.insertMany(list)
-    } catch (e) {
-        if (!isIndexConflictError(e)) throw e
-        const {code, message} = errorToDupKeyError(e, entityMeta)
-        throw new UniqueConflictError(code, message, "")
-    }
-
-    await trashCollection.deleteMany({_id: {$in: ids}})
+    await c.deleteMany(nativeCriteria)
 }
 
 export async function aFindOneByCriteria(entityMeta: EntityMeta,
     criteria: GenericCriteria, o?: FindOption) {
-    const collectionName = getCollectionName(entityMeta, o && o.repo)
+    const collectionName = entityMeta.tableName || entityMeta.name
 
     const nativeCriteria = toMongoCriteria(criteria)
 
@@ -157,10 +97,8 @@ export async function aFindOneByCriteria(entityMeta: EntityMeta,
 // sort 为 mongo 原生格式
 export async function aList(entityMeta: EntityMeta, options: ListOption)
     : Promise<PagingListResult | EntityPage> {
-    const {
-        criteria, sort, repo, includedFields, withoutTotal
-    } = options
-    const collectionName = getCollectionName(entityMeta, repo)
+    const { criteria, sort, includedFields, withoutTotal } = options
+    const collectionName = entityMeta.tableName || entityMeta.name
     const nativeCriteria = toMongoCriteria(criteria)
     const projection = arrayToTrueObject(includedFields) || {}
 
