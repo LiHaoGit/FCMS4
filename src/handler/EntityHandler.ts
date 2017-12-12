@@ -7,7 +7,8 @@ import { UserError } from "../Errors"
 import { formatEntityToHttp, getEntityMeta, parseEntity, parseId, parseIds,
     parseListQueryValue } from "../Meta"
 import { aCreate, aFindOneByCriteria, aFindOneById as aFindOneByIdService,
-    aList as aListService, aRemoveManyByCriteria, aUpdateOneByCriteria,
+    aList, aListHistory, aRemoveManyByCriteria,
+    aRestoreHistory, aUpdateOneByCriteria,
     aWithoutTransaction, aWithTransaction } from "../service/EntityService"
 import { isUserOrRoleHasFieldAction, splitString,
     stringToBoolean, stringToInt } from "../Util"
@@ -209,7 +210,7 @@ export async function _aFindOneById(ctx: koa.Context, entityName: string,
     return entity
 }
 
-export async function aList(ctx: koa.Context) {
+export async function aListH(ctx: koa.Context) {
     const entityName = ctx.state.params.entityName
 
     const r = await _aList(ctx, entityName)
@@ -229,7 +230,7 @@ export async function _aList(ctx: koa.Context, entityName: string,
 
     const r = await aWithoutTransaction(entityMeta, async conn =>
         aInterceptList(entityName, conn, lq, operator, async() =>
-            aListService(conn, entityName, lq))) as PagingListResult
+            aList(conn, entityName, lq))) as PagingListResult
 
     const page = r.page
     removeNotShownFields(entityMeta, ctx.state.user, ...page)
@@ -430,5 +431,51 @@ export function removeNoEditFields(entityMeta: EntityMeta, user: any,
 
 export async function aClearCache(ctx: koa.Context) {
     await aClearAllCache()
+    ctx.status = 204
+}
+
+export async function aListHistoryH(ctx: koa.Context) {
+    const entityName = ctx.state.params.entityName
+    const entityMeta = getEntityMeta(entityName)
+    if (!entityMeta) throw new UserError("NoSuchEntity")
+
+    const operator = ctx.state.user
+
+    const id = parseId(ctx.state.params.id, entityMeta)
+    if (!id) throw new UserError("BadId", "BadId")
+
+    const query = ctx.query || {}
+    const pageNo = stringToInt(query._pageNo, 1) as number
+    let pageSize = stringToInt(query._pageSize, 20) as number
+    if (pageSize > 100) pageSize = 100
+
+    const r = await aWithoutTransaction(entityMeta, async conn =>
+        aListHistory(conn, entityMeta, id, pageNo, pageSize))
+
+    const page = r.page
+    removeNotShownFields(entityMeta, ctx.state.user, ...page)
+
+    r.page = _.map(page, i => formatEntityToHttp(i, entityMeta))
+
+    ctx.body = r
+}
+
+export async function aRestoreHistoryH(ctx: koa.Context) {
+    const entityName = ctx.state.params.entityName
+    const entityMeta = getEntityMeta(entityName)
+    if (!entityMeta) throw new UserError("NoSuchEntity")
+    if (entityMeta.noEdit) throw new UserError("EditNotAllow")
+
+    const id = parseId(ctx.state.params.id, entityMeta)
+    if (!id) throw new UserError("BadId", "BadId")
+
+    const req = ctx.request.body
+    const version = req && req._version
+
+    const operator = ctx.state.user
+
+    await aWithTransaction(entityMeta, async conn =>
+        aRestoreHistory(conn, entityMeta, id, version, operator._id))
+
     ctx.status = 204
 }

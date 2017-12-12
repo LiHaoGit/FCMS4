@@ -38,7 +38,6 @@ interface MongoIndex {
     sparse?: boolean
     errorMessage: string
 }
-
 interface EntityMeta {
     system?: boolean
     _version?: number
@@ -57,6 +56,7 @@ interface EntityMeta {
     noCreate?: boolean
     noDelete?: boolean
     noEdit?: boolean
+    history?: number
     fields: {[k: string]: FieldMeta}
 }
 

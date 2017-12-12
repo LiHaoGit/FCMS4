@@ -73,10 +73,9 @@ export async function aUpdateManyByCriteria(conn: ExecuteContext,
 
     try {
         return entityMeta.db === DB.mysql
-            ? MysqlServ.aUpdateManyByCriteria(conn,
-                entityMeta, criteria, instance)
-            : MongoServ.aUpdateManyByCriteria(entityMeta,
-                criteria, instance)
+            ? MysqlServ.aUpdateManyByCriteria(conn, entityMeta, criteria,
+                instance)
+            : MongoServ.aUpdateManyByCriteria(entityMeta, criteria, instance)
     } finally {
         // TODO 清除效率改进
         await aFireEntityUpdated(conn, entityMeta)
@@ -217,4 +216,29 @@ export async function aWithoutTransaction<T>(entityMeta: EntityMeta,
     //     return Mysql.mysql.aWithoutTransaction(async conn => aWork(conn))
     // else
     return aWork({})
+}
+
+// 列出历史纪录
+export async function aListHistory(conn: ExecuteContext,
+    entityMeta: EntityMeta, id: any, pageNo: number, pageSize: number) {
+
+    // TODO history cache?
+    return entityMeta.db === DB.mysql
+        ? MysqlServ.aListHistory(conn, entityMeta, id, pageNo, pageSize)
+        : MongoServ.aListHistory(entityMeta, id, pageNo, pageSize)
+}
+
+// 从某个历史纪录中恢复
+export async function aRestoreHistory(conn: ExecuteContext,
+    entityMeta: EntityMeta, id: any, version: number, operatorId: string) {
+
+    try {
+        return entityMeta.db === DB.mysql
+            ? MysqlServ.aRestoreHistory(conn, entityMeta, id, version,
+                operatorId)
+            : MongoServ.aRestoreHistory(entityMeta, id, version, operatorId)
+    } finally {
+        // TODO 清除效率改进
+        await aFireEntityUpdated(conn, entityMeta)
+    }
 }

@@ -35,3 +35,15 @@ export async function aFindOneByCriteria(conn: ExecuteContext,
 export async function aList(conn: ExecuteContext, options: ListOption) {
     return null
 }
+
+// 从某个历史纪录中恢复
+export async function aRestoreHistory(conn: ExecuteContext,
+    entityMeta: EntityMeta, id: any, version: number, operatorId: string) {
+    return null
+}
+
+// 列出历史纪录
+export async function aListHistory(conn: ExecuteContext,
+    entityMeta: EntityMeta, id: any, pageNo: number, pageSize: number) {
+    return {pageNo: 1, pageSize: 10, page: [], total: 0}
+}
