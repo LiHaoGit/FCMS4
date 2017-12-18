@@ -377,6 +377,10 @@ const SystemEntities: EntityMetaMap = {
                 name: "label", label: "显示名", type: "String",
                 inputType: "Text"
             },
+            displayGroup: {
+                name: "displayGroup", label: "显示分组名", type: "String",
+                inputType: "Text"
+            },
             db: {
                 name: "db", label: "数据库类型", type: "String",
                 inputType: "Select",
