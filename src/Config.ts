@@ -34,6 +34,7 @@ function preprocess() {
 const DEFAULT_CONFIG: IConfig = {
     metaFile: "",
     serverPort: 8090,
+    serverSocketTimeout: 10 * 60 * 1000,
     cookieKey: "xxx",
     serverPugPath: "",
     uploadPath: "",

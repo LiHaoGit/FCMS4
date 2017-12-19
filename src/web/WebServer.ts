@@ -19,7 +19,9 @@ export const pugLocals = {}
 export async function aStart(router: Router) {
     configKoaServer(router)
 
-    server.on("error", err => logSystemError(err, "Error on server!"))
+    server.on("error", err => logSystemError(err, "HTTP server fire error"))
+    server.on("close", () => logSystemError("HTTP server fire close!"))
+    server.on("timeout", () => logSystemError("HTTP server fire timeout!"))
 
     enableDestroy(server)
 
@@ -77,6 +79,10 @@ function configKoaServer(router: Router) {
     koaServer.use(aHandleRoute) // 开始处理路由
 
     server = http.createServer(koaServer.callback())
+
+    let timeout = Config.serverSocketTimeout
+    if (!(timeout >= 0)) timeout = 10 * 60 * 1000
+    server.setTimeout(timeout)
 }
 
 async function aCatchError(ctx: Koa.Context, next: any) {

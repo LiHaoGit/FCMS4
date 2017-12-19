@@ -176,6 +176,7 @@ interface SubApp {
 interface IConfig {
     metaFile: string
     serverPort: number
+    serverSocketTimeout: number
     cookieKey: string
     serverPugPath: string
     uploadPath: string
