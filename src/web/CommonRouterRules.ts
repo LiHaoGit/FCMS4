@@ -117,7 +117,7 @@ export function addCommonRouteRules(router: Router) {
 
     rrr.get("/entity-history/:entityName/:id", {authEntity: "getEntity"},
         EntityHandler.aListHistoryH)
-    rrr.put("/entity/:entityName/:id", {authEntity: "updateOneEntity"},
+    rrr.put("/entity-restore/:entityName/:id", {authEntity: "updateOneEntity"},
         EntityHandler.aRestoreHistoryH)
 
     // ======================================
