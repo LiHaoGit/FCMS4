@@ -14,6 +14,7 @@ import { firstValueOfObject } from "../Util"
 export interface File {
     size: number
     path: string
+    name: string
 }
 
 // H5上传
@@ -86,7 +87,7 @@ export async function aUploadUtil(file: File, subDir: string) {
 
     await aMoveFileTo(file.path, Path.join(Config.fileDir, fileRelativePath))
 
-    return {fileRelativePath, fileSize:  file.size}
+    return {fileRelativePath, fileSize: file.size, name: file.name}
 }
 
 async function aUploadForEntityField(files: {[k: string]: File}, query: any) {
@@ -114,7 +115,7 @@ async function aUploadForEntityField(files: {[k: string]: File}, query: any) {
 
     await aMoveFileTo(file.path, Path.join(Config.fileDir, fileRelativePath))
 
-    return {fileRelativePath, fileSize: file.size}
+    return {fileRelativePath, fileSize: file.size, name: file.name}
 }
 
 // timeSlice: 是否要前缀时间分片的目录
