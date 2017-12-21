@@ -2,30 +2,30 @@
 
 import _ = require("lodash")
 
-type CreateInterceptor = (entityName: string, conn: any, instance: EntityValue,
+export type CreateInterceptor = (entityName: string, conn: any,
+    instance: EntityValue, operator: any, work: () => any) => any
+
+export type UpdateInterceptor = (entityName: string, conn: any,
+    instance: EntityValue, criteria: any, operator: any, work: () => any) => any
+
+export type ListInterceptor = (entityName: string, conn: any, query: ListOption,
     operator: any, work: () => any) => any
 
-type UpdateInterceptor = (entityName: string, conn: any, instance: EntityValue,
-    criteria: any, operator: any, work: () => any) => any
-
-type ListInterceptor = (entityName: string, conn: any, query: ListOption,
+export type GetInterceptor = (entityName: string, conn: any, criteria: any,
     operator: any, work: () => any) => any
 
-type GetInterceptor = (entityName: string, conn: any, criteria: any,
+export type DeleteInterceptor = (entityName: string, conn: any, criteria: any,
     operator: any, work: () => any) => any
 
-type DeleteInterceptor = (entityName: string, conn: any, criteria: any,
-    operator: any, work: () => any) => any
-
-const interceptorsOfCreate: {[entityName: string]: CreateInterceptor} = {}
-const interceptorsOfUpdate: {[entityName: string]: UpdateInterceptor} = {}
-const interceptorsOfList: {[entityName: string]: ListInterceptor} = {}
-const interceptorsOfGet: {[entityName: string]: GetInterceptor} = {}
-const interceptorsOfDelete: {[entityName: string]: DeleteInterceptor} = {}
+export const CreateInterceptors: {[entityName: string]: CreateInterceptor} = {}
+export const UpdateInterceptors: {[entityName: string]: UpdateInterceptor} = {}
+export const ListInterceptors: {[entityName: string]: ListInterceptor} = {}
+export const GetInterceptors: {[entityName: string]: GetInterceptor} = {}
+export const DeleteInterceptors: {[entityName: string]: DeleteInterceptor} = {}
 
 export async function aInterceptCreate<T>(entityName: string, conn: any,
     instance: any, operator: EntityValue, work: () => T): Promise<T> {
-    const i = interceptorsOfCreate[entityName]
+    const i = CreateInterceptors[entityName]
     if (i) {
         return i(entityName, conn, instance, operator, work)
     } else {
@@ -35,7 +35,7 @@ export async function aInterceptCreate<T>(entityName: string, conn: any,
 
 export async function aInterceptList<T>(entityName: string, conn: any,
     query: ListOption, operator: EntityValue, work: () => T): Promise<T> {
-    const i = interceptorsOfList[entityName]
+    const i = ListInterceptors[entityName]
     if (i) {
         return i(entityName, conn, query, operator, work)
     } else {
@@ -45,7 +45,7 @@ export async function aInterceptList<T>(entityName: string, conn: any,
 
 export async function aInterceptGet<T>(entityName: string, conn: any,
     criteria: any, operator: EntityValue, work: () => T): Promise<T> {
-    const i = interceptorsOfGet[entityName]
+    const i = GetInterceptors[entityName]
     if (i) {
         return i(entityName, conn, criteria, operator, work)
     } else {
@@ -55,7 +55,7 @@ export async function aInterceptGet<T>(entityName: string, conn: any,
 
 export async function aInterceptDelete<T>(entityName: string, conn: any,
     criteria: any, operator: EntityValue, work: () => T): Promise<T> {
-    const i = interceptorsOfDelete[entityName]
+    const i = DeleteInterceptors[entityName]
     if (i) {
         return i(entityName, conn, criteria, operator, work)
     } else {
@@ -67,7 +67,7 @@ export async function aInterceptUpdate<T>(entityName: string, conn: any,
     patch: EntityValue, criteria: any, operator: EntityValue,
     work: () => T): Promise<T> {
 
-    const i = interceptorsOfUpdate[entityName]
+    const i = UpdateInterceptors[entityName]
     if (i) {
         return i(entityName, conn, patch, criteria, operator, work)
     } else {
