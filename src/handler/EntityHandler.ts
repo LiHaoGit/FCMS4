@@ -197,9 +197,11 @@ export async function _aFindOneById(ctx: koa.Context, entityName: string,
 
     const criteria = {_id: id}
 
+    const opt: FindOption = parseFindOneQuery(entityMeta, ctx.query)
+
     let entity = await aWithoutTransaction(entityMeta, async conn =>
         aInterceptGet(entityName, conn, criteria, operator, async() =>
-        aFindOneByIdService(conn, entityName, id, {})))
+        aFindOneByIdService(conn, entityName, id, opt)))
 
     if (entity) {
         removeNotShownFields(entityMeta, ctx.state.user, entity)
@@ -319,6 +321,20 @@ export function parseListQuery(entityMeta: EntityMeta, query: any): ListOption {
     }
 
     return { pageNo, pageSize, criteria, includedFields, sort }
+}
+
+/**
+ * only _includedFields
+ * @param entityMeta entityMeta
+ * @param query query
+ */
+export function parseFindOneQuery(entityMeta: EntityMeta,
+        query: any): FindOption {
+    const includedFields = splitString(query._includedFields, ",") || undefined
+    if (includedFields)
+        return {includedFields}
+    else
+        return {}
 }
 
 export async function aSaveFilters(ctx: koa.Context) {
