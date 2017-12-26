@@ -4,7 +4,7 @@ import Path = require("path")
 
 import Config from "../Config"
 import { aListFilesRecursive, aReadDir, aWriteFile } from "../FileUtil"
-import { logSystemInfo } from "../Log"
+import { logSystemDebug, logSystemInfo } from "../Log"
 import { getEntities, getEntityMeta } from "../Meta"
 import { getStore } from "../storage/MongoStore"
 import { arrayToTrueObject } from "../Util"
@@ -103,13 +103,19 @@ function extractFilesFromHtml(html: string, files: string[]) {
 
 function extractFilesFromJSON(json: any, extensions: string[],
     files: string[]) {
+
     const jsonString = JSON.stringify(json)
+    // logSystemDebug("json: ", jsonString)
+
     for (const ext of extensions) {
-        const p = new RegExp(`["']([\\w-/]+.${ext})["']/ig`)
+        const p = new RegExp(`["']([\\w\\-\\/]+.${ext})["']`, "ig")
         let m = p.exec(jsonString)
         while (m) {
             const f = m[1]
-            if (f) files.push(f)
+            if (f) {
+                files.push(f)
+                logSystemDebug("Find file in object", f)
+            }
             m = p.exec(jsonString)
         }
     }
