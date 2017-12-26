@@ -57,6 +57,11 @@ async function aCheckAll(httpCtx: koa.Context) {
     const route = state.route
 
     const ri = route.info as RouteInfo
+
+    if (ri.admin) {
+        return state && state.user && state.user.admin
+    }
+
     if (!(ri.auth || ri.action)) return true // 明确表示不需要登录直接返回 true
 
     if (state.user && state.user.admin) return true // admin 跳过一切权限

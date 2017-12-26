@@ -1,9 +1,11 @@
 // cSpell:words Captcha ckeditor
 
 import Config from "../Config"
-import {actions as MetaActions } from "../Meta"
+import { logSystemInfo } from "../Log"
+import { actions as MetaActions } from "../Meta"
 import { Router, RouteRuleRegisters } from "./Router"
 
+import * as AdminHandler from "../handler/AdminHandler"
 import * as CaptchaHandler from "../handler/CaptchaHandler"
 import * as EntityHandler from "../handler/EntityHandler"
 import * as MetaHandler from "../handler/MetaHandler"
@@ -12,7 +14,7 @@ import * as SsoClientHandler from "../handler/SsoClientHandler"
 import * as SsoServerHandler from "../handler/SsoServerHandler"
 import * as UploadHandler from "../handler/UploadHandler"
 import * as UserHandler from "../handler/UserHandler"
-import { logSystemInfo } from "../Log"
+
 
 const actions = {
     ReadMeta: "读取元数据",
@@ -140,4 +142,10 @@ export function addCommonRouteRules(router: Router) {
     //
     // let ESController = require('../handler/ElasticSearchController')
     // rrr.post('/config-es', {action: 'ES'}, ESController.aConfig)
+
+    // ======================================
+    // ADMIN
+    // ======================================
+    rrr.post("/admin/analyze-file", {admin: true},
+        AdminHandler.aHandleAnalyzeFile)
 }

@@ -117,6 +117,7 @@ interface RouteInfo {
 }
 
 interface RouteConfig {
+    admin?: boolean
     auth?: boolean
     authEntity?: string
     action?: string
