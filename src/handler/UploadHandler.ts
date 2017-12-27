@@ -19,8 +19,7 @@ export interface File {
 
 // H5上传
 export async function aUpload(ctx: koa.Context) {
-    const result = await aUploadForEntityField(ctx.request.body.files,
-        ctx.query)
+    const result = await aUploadForEntityField(ctx.request.body.files)
 
     if (result)
         ctx.body = result
@@ -30,12 +29,12 @@ export async function aUpload(ctx: koa.Context) {
 
 // Transport 上传
 export async function aUpload2(ctx: koa.Context) {
-    let result = await aUploadForEntityField(ctx.request.body.files,
-        ctx.query) as any
-    if (result)
+    let result = await aUploadForEntityField(ctx.request.body.files) as any
+    if (result) {
         result.success = true
-    else
+    } else {
         result = {success: false}
+    }
     ctx.body = '<textarea data-type="application/json">' +
         JSON.stringify(result) + "</textarea>"
 }
@@ -90,26 +89,15 @@ export async function aUploadUtil(file: File, subDir: string) {
     return {fileRelativePath, fileSize: file.size, name: file.name}
 }
 
-async function aUploadForEntityField(files: {[k: string]: File}, query: any) {
+// 不在按字段设置目录等。前端传来的数据，不可信，意义不大。
+async function aUploadForEntityField(files: {[k: string]: File}) {
     if (!files) return null
 
     const fileKey = Object.keys(files)[0] // 只上传第一个文件
     if (!fileKey) return null
     const file = files[fileKey]
 
-    const entityName = query.entityName
-    const fieldName = query.fieldName
-
-    if (!(entityName && fieldName)) return null
-
-    const entityMeta = getEntityMeta(entityName)
-    if (!entityMeta) throw new UserError("NoSuchEntity",
-        `无此实体 ${entityName}`)
-    const fieldMeta = entityMeta.fields[fieldName]
-    if (!fieldMeta) throw new UserError("NoSuchEntityField",
-        `无此字段 ${entityName}.${fieldName}`)
-
-    const subDir = fieldMeta.fileStoreDir || "default"
+    const subDir = "default"
     const fileRelativePath = generateRelativePath(subDir,
         Path.extname(file.path))
 
