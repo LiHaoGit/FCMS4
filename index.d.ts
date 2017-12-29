@@ -19,7 +19,6 @@ interface FieldMeta {
     noCreate?: boolean
     noEdit?: boolean
     fastFilter?: boolean
-    hideInListPage?: boolean
     options?: NameLabelOption[]
     optionsDependOnField?: string
     optionsFunc?: string
@@ -29,6 +28,7 @@ interface FieldMeta {
     editReadonly?: boolean
     notShow?: boolean
     fileStoreDir?: string
+    showInListPage?: boolean
 }
 
 interface MongoIndex {

@@ -308,13 +308,12 @@ export function patchSystemFields(entityMeta: EntityMeta) {
     fields._version = {
         system: true, name: "_version", label: "修改版本", type: "Int",
         persistType: intPersistType, sqlColM: 12,
-        inputType: "Int", noCreate: true, noEdit: true, hideInListPage: true
+        inputType: "Int", noCreate: true, noEdit: true
     }
     fields._createdOn = {
         system: true, name: "_createdOn", label: "创建时间", type: "DateTime",
         persistType: timestampPersistType,
-        inputType: "DateTime", noCreate: true, noEdit: true,
-        hideInListPage: true
+        inputType: "DateTime", noCreate: true, noEdit: true
     }
     fields._modifiedOn = {
         system: true, name: "_modifiedOn", label: "修改时间", type: "DateTime",
@@ -325,15 +324,13 @@ export function patchSystemFields(entityMeta: EntityMeta) {
         system: true, name: "_createdBy", label: "创建人", type: "Reference",
         refEntity: "F_User",
         persistType: userIdPersistType, sqlColM: ObjectIdStringLength,
-        inputType: "Reference", noCreate: true, noEdit: true,
-        hideInListPage: true
+        inputType: "Reference", noCreate: true, noEdit: true
     }
     fields._modifiedBy = {
         system: true, name: "_modifiedBy", label: "修改人", type: "Reference",
         refEntity: "F_User",
         persistType: userIdPersistType, sqlColM: ObjectIdStringLength,
-        inputType: "Reference", noCreate: true, noEdit: true,
-        hideInListPage: true
+        inputType: "Reference", noCreate: true, noEdit: true
     }
 
     return entityMeta.fields = {...entityMeta.fields, ...fields}
@@ -419,11 +416,11 @@ const SystemEntities: EntityMetaMap = {
             },
             editEnhanceFunc: {
                 name: "editEnhanceFunc", label: "编辑增强脚本", type: "String",
-                inputType: "Text", hideInListPage: true
+                inputType: "Text"
             },
             viewEnhanceFunc: {
                 name: "viewEnhanceFunc", label: "详情增强脚本", type: "String",
-                inputType: "Text", hideInListPage: true
+                inputType: "Text"
             },
             fieldGroups: {
                 name: "fieldGroups", label: "字段分组", type: "Component",
@@ -445,7 +442,7 @@ const SystemEntities: EntityMetaMap = {
             system: {
                 name: "system", label: "系统字段", type: "Boolean",
                 inputType: "Check",
-                noCreate: true, noEdit: true, hideInListPage: true
+                noCreate: true, noEdit: true
             },
             name: {
                 name: "name", label: "字段名", type: "String",
@@ -461,11 +458,11 @@ const SystemEntities: EntityMetaMap = {
             },
             comment: {
                 name: "comment", label: "开发备注", type: "String",
-                inputType: "TextArea", hideInListPage: true
+                inputType: "TextArea"
             },
             useGuide: {
                 name: "useGuide", label: "使用备注", type: "String",
-                inputType: "Text", hideInListPage: true
+                inputType: "Text"
             },
             type: {
                 name: "type", label: "类型", type: "String",
@@ -474,7 +471,7 @@ const SystemEntities: EntityMetaMap = {
             },
             unique: {
                 name: "unique", label: "值唯一", type: "Boolean",
-                inputType: "Check", hideInListPage: true
+                inputType: "Check"
             },
             refEntity: {
                 name: "refEntity", label: "关联实体", type: "String",
@@ -484,33 +481,27 @@ const SystemEntities: EntityMetaMap = {
                 name: "inputType", label: "输入类型", type: "String",
                 inputType: "Select",
                 optionsDependOnField: "type",
-                optionsFunc: "F.optionsOfInputType",
-                hideInListPage: true
+                optionsFunc: "F.optionsOfInputType"
             },
             inputFunc: {
                 name: "inputFunc", label: "输入构建器", type: "String",
-                inputType: "Text", hideInListPage: true
+                inputType: "Text"
             },
             inputRequired: {
                 name: "inputRequired", label: "输入值不能为空", type: "Boolean",
-                inputType: "Check",
-                hideInListPage: true
+                inputType: "Check"
             },
             notShow: {
                 name: "notShow", label: "界面隐藏", type: "Boolean",
-                inputType: "Check", hideInListPage: true
+                inputType: "Check"
             },
             noCreate: {
                 name: "noCreate", label: "不允许创建", type: "Boolean",
-                inputType: "Check", hideInListPage: true
+                inputType: "Check"
             },
             noEdit: {
                 name: "noEdit", label: "不允许编辑", type: "Boolean",
-                inputType: "Check", hideInListPage: true
-            },
-            hideInListPage: {
-                name: "hideInListPage", label: "列表页面不显示",  type: "Boolean",
-                inputType: "Check",  hideInListPage: true
+                inputType: "Check"
             },
             fastSearch: {
                 name: "fastSearch", label: "支持快速搜索", type: "Boolean",
@@ -518,17 +509,17 @@ const SystemEntities: EntityMetaMap = {
             },
             persistType: {
                 name: "persistType", label: "存储类型", type: "String",
-                inputType: "Select", hideInListPage: true,
+                inputType: "Select",
                 optionsDependOnField: "type",
                 optionsFunc: "F.optionsOfPersistType"
             },
             sqlColM: {
                 name: "sqlColM", label: "SQL列宽", type: "Int",
-                inputType: "Int", hideInListPage: true
+                inputType: "Int"
             },
             required: {
                 name: "required", label: "存储非空", type: "Boolean",
-                inputType: "Check", hideInListPage: true
+                inputType: "Check"
             },
             multiple: {
                 name: "multiple", label: "多个值", type: "Boolean",
@@ -536,51 +527,49 @@ const SystemEntities: EntityMetaMap = {
             },
             multipleUnique: {
                 name: "unique", label: "多个值不重复", type: "Boolean",
-                inputType: "Check", hideInListPage: true
+                inputType: "Check"
             },
             multipleMin: {
                 name: "multipleMin", label: "多个值数量下限", type: "Int",
-                inputType: "Int", hideInListPage: true
+                inputType: "Int"
             },
             multipleMax: {
                 name: "multipleMax", label: "多个值数量上限", type: "Int",
-                inputType: "Int", hideInListPage: true
+                inputType: "Int"
             },
             options: {
                 name: "options", label: "输入选项", type: "Component",
                 refEntity: "F_FieldInputOption", multiple: true,
-                inputType: "InlineComponent", hideInListPage: true
+                inputType: "InlineComponent"
             },
             optionsDependOnField: {
                 name: "optionsDependOnField", label: "输入选项随此字段改变",
-                type: "String", inputType: "Text", hideInListPage: true
+                type: "String", inputType: "Text"
             },
             optionsFunc: {
                 name: "optionsFunc", label: "选项决定函数", type: "String",
-                inputType: "Text", hideInListPage: true
+                inputType: "Text"
             },
             groupedOptions: {
                 name: "groupedOptions", label: "分组的输入选项",
                 type: "Component", refEntity: "F_FieldInputGroupedOptions",
-                multiple: true, inputType: "InlineComponent",
-                hideInListPage: true
+                multiple: true, inputType: "InlineComponent"
             },
             optionWidth: {
                 name: "optionWidth", label: "选项宽度", type: "Int",
-                inputType: "Int", hideInListPage: true
+                inputType: "Int"
             },
             fileStoreDir: {
                 name: "fileStoreDir", label: "文件存储路径", type: "String",
-                inputType: "Text", hideInListPage: true
+                inputType: "Text"
             },
             removePreviousFile: {
                 name: "removePreviousFile", label: "自动删除之前的文件",
-                type: "Boolean", inputType: "Check",
-                hideInListPage: true
+                type: "Boolean", inputType: "Check"
             },
             fileMaxSize: {
                 name: "fileMaxSize", label: "文件大小限制（字节）", type: "Int",
-                inputType: "Int", hideInListPage: true
+                inputType: "Int"
             }
         }
     },
@@ -677,7 +666,7 @@ const SystemEntities: EntityMetaMap = {
         fields: {
             key: {
                 name: "key", label: "KEY", type: "String",
-                inputType: "Text", persistType: "String"
+                inputType: "Text", persistType: "String", showInListPage: true
             },
             mail: {
                 name: "systemMail", label: "发信邮箱", type: "String",
@@ -768,11 +757,13 @@ const SystemEntities: EntityMetaMap = {
         fields: {
             username: {
                 name: "username", label: "用户名", asFastFilter: true,
-                type: "String", inputType: "Text", persistType: "String"
+                type: "String", inputType: "Text", persistType: "String",
+                showInListPage: true
             },
             nickname: {
                 name: "nickname", label: "昵称", asFastFilter: true,
-                type: "String", inputType: "Text", persistType: "String"
+                type: "String", inputType: "Text", persistType: "String",
+                showInListPage: true
             },
             password: {
                 name: "password", label: "密码", type: "Password",
@@ -780,19 +771,23 @@ const SystemEntities: EntityMetaMap = {
             },
             phone: {
                 name: "phone", label: "手机", asFastFilter: true,
-                type: "String", inputType: "Text", persistType: "String"
+                type: "String", inputType: "Text", persistType: "String",
+                showInListPage: true
             },
             email: {
                 name: "email", label: "邮箱", asFastFilter: true,
-                type: "String",  inputType: "Text", persistType: "String"
+                type: "String",  inputType: "Text", persistType: "String",
+                showInListPage: true
             },
             admin: {
                 name: "admin", label: "超管", type: "Boolean",
-                inputType: "Check",  persistType: "Boolean"
+                inputType: "Check",  persistType: "Boolean",
+                showInListPage: true
             },
             disabled: {
                 name: "disabled",  label: "禁用", type: "Boolean",
-                inputType: "Check", persistType: "Boolean"
+                inputType: "Check", persistType: "Boolean",
+                showInListPage: true
             },
             roles: {
                 name: "roles",  label: "角色",  type: "Reference",
@@ -802,7 +797,7 @@ const SystemEntities: EntityMetaMap = {
             acl: {
                 name: "acl", label: "ACL", type: "Object",
                 multiple: false, inputFunc: "F.inputACL",
-                persistType: "Document", hideInListPage: true
+                persistType: "Document"
             }
         }
     },
@@ -815,12 +810,12 @@ const SystemEntities: EntityMetaMap = {
             name: {
                 name: "name", label: "角色名", type: "String",
                 inputType: "Text", asFastFilter: true,
-                persistType: "String"
+                persistType: "String", showInListPage: true
             },
             acl: {
                 name: "acl",  label: "ACL",  type: "Object",
                 multiple: false, inputFunc: "F.inputACL",
-                persistType: "Document", hideInListPage: true
+                persistType: "Document"
             }
         }
     },
@@ -831,19 +826,19 @@ const SystemEntities: EntityMetaMap = {
         fields: {
             userId: {
                 name: "userId", label: "用户ID", type: "String",
-                inputType: "Text", persistType: "String"
+                inputType: "Text", persistType: "String", showInListPage: true
             },
             userToken: {
-                name: "userToken",  label: "用户TOKEN", type: "String",
-                inputType: "Text", persistType: "String"
+                name: "userToken",  label: "用户TOKEN", type: "Password",
+                inputType: "Password", persistType: "String"
             },
             origin: {
                 name: "origin", label: "origin", type: "String",
-                inputType: "Text", persistType: "String"
+                inputType: "Text", persistType: "String", showInListPage: true
             },
             expireAt: {
                 name: "expireAt", label: "过期时间", type: "Int",
-                inputType: "Int", persistType: "Int"
+                inputType: "Int", persistType: "Int", showInListPage: true
             }
         }
     },
@@ -856,11 +851,11 @@ const SystemEntities: EntityMetaMap = {
         fields: {
             name: {
                 name: "name", label: "名字", type: "String",
-                inputType: "Text", persistType: "String"
+                inputType: "Text", persistType: "String", showInListPage: true
             },
             entityName: {
                 name: "entityName", label: "实体名", type: "String",
-                inputType: "Text", persistType: "String"
+                inputType: "Text", persistType: "String", showInListPage: true
             },
             criteria: {
                 name: "criteria", label: "条件", type: "String",
@@ -883,15 +878,15 @@ const SystemEntities: EntityMetaMap = {
         fields: {
             userId: {
                 name: "userId",  label: "用户ID",  type: "String",
-                inputType: "Text",  persistType: "String"
+                inputType: "Text",  persistType: "String", showInListPage: true
             },
             userToken: {
-                name: "userToken", label: "用户TOKEN", type: "String",
-                inputType: "Text",  persistType: "String"
+                name: "userToken", label: "用户TOKEN", type: "Password",
+                inputType: "Password",  persistType: "String"
             },
             expireAt: {
                 name: "expireAt",  label: "过期时间",   type: "Int",
-                inputType: "Int",  persistType: "Int"
+                inputType: "Int",  persistType: "Int", showInListPage: true
             }
         }
     },
@@ -901,15 +896,15 @@ const SystemEntities: EntityMetaMap = {
         fields: {
             origin: {
                 name: "origin",  label: "客户端域", type: "String",
-                inputType: "Text",  persistType: "String"
+                inputType: "Text",  persistType: "String", showInListPage: true
             },
             token: {
-                name: "token", label: "授权令牌",  type: "String",
-                inputType: "Text",  persistType: "String"
+                name: "token", label: "授权令牌",  type: "Password",
+                inputType: "Password",  persistType: "String"
             },
             userId: {
                 name: "userId", label: "UserId", type: "String",
-                inputType: "Text", persistType: "String"
+                inputType: "Text", persistType: "String", showInListPage: true
             }
         }
     },
