@@ -248,16 +248,9 @@ export function parseListQuery(entityMeta: EntityMeta, query: any): ListOption {
     let criteria, sort
     let includedFields = splitString(query._includedFields, ",") || undefined
 
-    const digest = query._digest === "true"
+    const digest = !!query._digest
     if (digest) {
-        if (entityMeta.digestFields) { // "username|email,admin"
-            let fs: string[] = []
-            const fields = entityMeta.digestFields.split(",")
-            for (const field of fields) fs = fs.concat(field.split("|"))
-            includedFields = fs
-        } else {
-            includedFields = ["_id"]
-        }
+        includedFields = entityMeta.fieldsForDigest || ["_id"]
     }
 
     const pageNo = stringToInt(query._pageNo, 1)

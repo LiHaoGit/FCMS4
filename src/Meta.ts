@@ -407,10 +407,6 @@ const SystemEntities: EntityMetaMap = {
                 name: "singleton", label: "单例", type: "Boolean",
                 inputType: "Check"
             },
-            digestFields: {
-                name: "digestFields", label: "摘要字段", type: "String",
-                inputType: "Text"
-            },
             mongoIndexes: {
                 name: "mongoIndexes", label: "MongoDB索引", type: "Component",
                 refEntity: "F_MongoIndex", multiple: true,
@@ -444,7 +440,6 @@ const SystemEntities: EntityMetaMap = {
     F_FieldMeta: {
         system: true, noPatchSystemFields: true,
         name: "F_FieldMeta", label: "字段元数据", db: DB.none,
-        digestFields: "name,label,type,multiple",
         editEnhanceFunc: "F.enhanceFieldMetaEdit",
         fields: {
             system: {
@@ -592,7 +587,7 @@ const SystemEntities: EntityMetaMap = {
     F_FieldInputOption: {
         system: true, noPatchSystemFields: true,
         name: "F_FieldInputOption", label: "字段输入选项",
-        db: DB.none, digestFields: "name,label",
+        db: DB.none,
         fields: {
             name: {
                 name: "name", label: "字段名", type: "String",
@@ -607,7 +602,7 @@ const SystemEntities: EntityMetaMap = {
     F_FieldInputGroupedOptions: {
         system: true, noPatchSystemFields: true,
         name: "F_FieldInputGroupedOptions", label: "字段输入分组选项",
-        db: DB.none, digestFields: "key",
+        db: DB.none,
         fields: {
             key: {
                 name: "key", label: "分组键", type: "String",
@@ -623,7 +618,6 @@ const SystemEntities: EntityMetaMap = {
     F_MongoIndex: {
         system: true, noPatchSystemFields: true,
         name: "F_MongoIndex", label: "MongoDB索引", db: DB.none,
-        digestFields: "name,fields",
         fields: {
             name: {
                 name: "name", label: "索引名", type: "String",
@@ -650,7 +644,6 @@ const SystemEntities: EntityMetaMap = {
     F_MySQLIndex: {
         system: true, noPatchSystemFields: true,
         name: "F_MySQLIndex", label: "MySQL索引", db: DB.none,
-        digestFields: "name,fields",
         fields: {
             name: {
                 name: "name", label: "索引名", type: "String",
@@ -719,6 +712,8 @@ const SystemEntities: EntityMetaMap = {
     F_MenuGroup: {
         system: true,
         name: "F_MenuGroup", label: "菜单组", db: DB.none,
+        digestConfig: "label",
+        fieldsForDigest: ["label"],
         fields: {
             label: {
                 name: "label", label: "显示名", type: "String",
@@ -734,7 +729,8 @@ const SystemEntities: EntityMetaMap = {
     F_MenuItem: {
         system: true,
         name: "F_MenuItem", label: "菜单项", db: DB.none,
-        digestFields: "label,toEntity,callFunc",
+        digestConfig: "label&toEntity&callFunc",
+        fieldsForDigest: ["label", "toEntity", "callFunc"],
         fields: {
             label: {
                 name: "label", label: "显示名", type: "String",
@@ -767,7 +763,8 @@ const SystemEntities: EntityMetaMap = {
             name: "nickname", fields: "nickname:1", unique: true, sparse: true,
             errorMessage: "昵称已被注册"
         }],
-        digestFields: "username|nickname|phone|email|_id",
+        digestConfig: "username|nickname|phone|email",
+        fieldsForDigest: ["username", "nickname", "phone", "email"],
         fields: {
             username: {
                 name: "username", label: "用户名", asFastFilter: true,
@@ -812,7 +809,8 @@ const SystemEntities: EntityMetaMap = {
     F_UserRole: {
         system: true, idType: "String",
         name: "F_UserRole", label: "用户角色", db: DB.mongo,
-        dbName: "main", tableName: "F_UserRole", digestFields: "name",
+        dbName: "main", tableName: "F_UserRole",
+        digestConfig: "name", fieldsForDigest: ["name"],
         fields: {
             name: {
                 name: "name", label: "角色名", type: "String",
@@ -853,7 +851,8 @@ const SystemEntities: EntityMetaMap = {
         system: true,
         name: "F_ListFilters", label: "列表查询条件", db: DB.mongo,
         dbName: "main", tableName: "F_ListFilters",
-        digestFields: "name,entityName",
+        digestConfig: "name&entityName",
+        fieldsForDigest: ["name", "entityName"],
         fields: {
             name: {
                 name: "name", label: "名字", type: "String",
@@ -899,7 +898,6 @@ const SystemEntities: EntityMetaMap = {
     F_SsoClientToken: {
         system: true,  name: "F_SsoClientToken", label: "SSO客户端授权",
         db: DB.mongo, dbName: "main", tableName: "F_SsoClientToken",
-        digestFields: "",
         fields: {
             origin: {
                 name: "origin",  label: "客户端域", type: "String",
@@ -918,7 +916,7 @@ const SystemEntities: EntityMetaMap = {
     F_KeyValue: {
         system: true, name: "F_KeyValue", label: "键值对",
         db: DB.mongo, dbName: "main", tableName: "F_KeyValue",
-        digestFields: "key",
+        digestConfig: "key", fieldsForDigest: ["key"],
         fields: {
             key: {
                 name: "key", label: "键", type: "String", inputType: "Text",

@@ -50,7 +50,9 @@ interface EntityMeta {
     tableName?: string
     noPatchSystemFields?: boolean
     mongoIndexes?: MongoIndex[]
-    digestFields?: string
+    iconField?: string
+    digestConfig?: string
+    fieldsForDigest?: string[]
     editEnhanceFunc?: string
     noServiceCache?: boolean
     noCreate?: boolean
