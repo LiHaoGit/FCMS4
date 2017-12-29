@@ -79,7 +79,6 @@ export async function aLoad(extraEntities: {[k: string]: EntityMeta}) {
 
 export async function aSaveEntityMeta(entityName: string,
     entityMeta: EntityMeta) {
-    entityMeta._modifiedOn = new Date()
 
     entities[entityName] = entityMeta
 
@@ -87,13 +86,9 @@ export async function aSaveEntityMeta(entityName: string,
 }
 
 export async function aRemoveEntityMeta(entityName: string) {
-    const db = await getMainStore().aDatabase()
-    const c = db.collection("F_EntityMeta")
-    await c.remove({name: entityName})
-
     delete entities[entityName]
 
-    await aWriteJSON("../meta.json", entities)
+    await aWriteJSON(Config.metaFile, entities)
 }
 
 // 将 HTTP 输入的实体或组件值规范化
