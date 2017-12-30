@@ -1,4 +1,4 @@
-// cSpell:words upsert repo
+// cSpell:words upsert repo BTREE RTREE
 
 import * as crypto from "crypto"
 import * as _ from "lodash"
@@ -345,11 +345,6 @@ export function initSystemMeta(extraEntities: EntityMetaMap) {
         delete entityMeta.idType
         entityMeta.system = true
     }
-
-    const databases = _.map(Config.mongoDatabases, d => d.name)
-    SystemEntities.F_EntityMeta.fields.dbName.options = arrayToOption(databases)
-
-    // TODO mysql databases
 }
 
 const SystemEntities: EntityMetaMap = {
@@ -376,9 +371,9 @@ const SystemEntities: EntityMetaMap = {
             db: {
                 name: "db", label: "数据库类型", type: "String",
                 inputType: "Select",
-                options: [{name: DB.mongo, label: "MongoDB"},
-                    {name: DB.mysql, label: "MySQL"},
-                    {name: DB.none, label: "不使用数据库"}]
+                kvOptions: [{key: DB.mongo, value: "MongoDB"},
+                    {key: DB.mysql, value: "MySQL"},
+                    {key: DB.none, value: "不使用数据库"}]
             },
             dbName: {
                 name: "dbName", label: "数据库名", type: "String",
@@ -467,7 +462,7 @@ const SystemEntities: EntityMetaMap = {
             type: {
                 name: "type", label: "类型", type: "String",
                 inputType: "Select",
-                options: arrayToOption(FieldDataTypes)
+                textOptions: FieldDataTypes
             },
             unique: {
                 name: "unique", label: "值唯一", type: "Boolean",
@@ -480,7 +475,6 @@ const SystemEntities: EntityMetaMap = {
             inputType: {
                 name: "inputType", label: "输入类型", type: "String",
                 inputType: "Select",
-                optionsDependOnField: "type",
                 optionsFunc: "F.optionsOfInputType"
             },
             inputFunc: {
@@ -510,7 +504,6 @@ const SystemEntities: EntityMetaMap = {
             persistType: {
                 name: "persistType", label: "存储类型", type: "String",
                 inputType: "Select",
-                optionsDependOnField: "type",
                 optionsFunc: "F.optionsOfPersistType"
             },
             sqlColM: {
@@ -649,9 +642,7 @@ const SystemEntities: EntityMetaMap = {
             indexType: {
                 name: "indexType", label: "indexType", type: "String",
                 inputType: "CheckList",
-                options: [{name: "BTREE", label: "BTREE"},
-                    {name: "HASH", label: "HASH"},
-                    {name: "RTREE", label: "RTREE"}]
+                textOptions: ["BTREE", "HASH", "RTREE"]
             },
             errorMessage: {
                 name: "errorMessage", label: "错误消息", type: "String",
@@ -896,10 +887,6 @@ const SystemEntities: EntityMetaMap = {
             }
         }
     }
-}
-
-function arrayToOption(a: string[]): NameLabelOption[] {
-    return _.map(a, item => ({name: item, label: item}))
 }
 
 function mergeEntities(extraEntities: EntityMetaMap) {

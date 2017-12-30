@@ -1,8 +1,8 @@
 // cSpell:words repo captcha fcms upsert
 
-interface NameLabelOption {
-    name: string,
-    label: string
+interface KvOption {
+    key: string,
+    value: string
 }
 
 interface FieldMeta {
@@ -19,8 +19,6 @@ interface FieldMeta {
     noCreate?: boolean
     noEdit?: boolean
     fastFilter?: boolean
-    options?: NameLabelOption[]
-    optionsDependOnField?: string
     optionsFunc?: string
     comment?: string
     asFastFilter?: boolean
@@ -29,6 +27,8 @@ interface FieldMeta {
     notShow?: boolean
     fileStoreDir?: string
     showInListPage?: boolean
+    kvOptions?: KvOption[]
+    textOptions?: string[]
 }
 
 interface MongoIndex {
