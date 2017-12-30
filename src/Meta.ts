@@ -672,7 +672,7 @@ const SystemEntities: EntityMetaMap = {
         }
     },
     F_MenuGroup: {
-        system: true,
+        system: true, type: "Component",
         name: "F_MenuGroup", label: "菜单组", db: DB.none,
         digestConfig: "label",
         fieldsForDigest: ["label"],
@@ -689,7 +689,7 @@ const SystemEntities: EntityMetaMap = {
         }
     },
     F_MenuItem: {
-        system: true,
+        system: true, type: "Component",
         name: "F_MenuItem", label: "菜单项", db: DB.none,
         digestConfig: "label&toEntity&callFunc",
         fieldsForDigest: ["label", "toEntity", "callFunc"],
@@ -815,35 +815,6 @@ const SystemEntities: EntityMetaMap = {
             }
         }
     },
-    F_ListFilters: {
-        system: true,
-        name: "F_ListFilters", label: "列表查询条件", db: DB.mongo,
-        dbName: "main", tableName: "F_ListFilters",
-        digestConfig: "name&entityName",
-        fieldsForDigest: ["name", "entityName"],
-        fields: {
-            name: {
-                name: "name", label: "名字", type: "String",
-                inputType: "Text", persistType: "String", showInListPage: true
-            },
-            entityName: {
-                name: "entityName", label: "实体名", type: "String",
-                inputType: "Text", persistType: "String", showInListPage: true
-            },
-            criteria: {
-                name: "criteria", label: "条件", type: "String",
-                inputType: "TextArea", persistType: "String"
-            },
-            sortBy: {
-                name: "sortBy", label: "排序字段", type: "String",
-                inputType: "Text", persistType: "String"
-            },
-            sortOrder: {
-                name: "sortOrder", label: "顺序", type: "String",
-                inputType: "Text", persistType: "String"
-            }
-        }
-    },
     F_SsoSession: {
         system: true,
         name: "F_SsoSession", label: "SSoSession", db: DB.mongo,
@@ -881,8 +852,37 @@ const SystemEntities: EntityMetaMap = {
             }
         }
     },
+    F_ListFilters: {
+        system: true,
+        name: "F_ListFilters", label: "列表查询条件", db: DB.mongo,
+        dbName: "main", tableName: "F_ListFilters",
+        digestConfig: "name&entityName",
+        fieldsForDigest: ["name", "entityName"],
+        fields: {
+            name: {
+                name: "name", label: "名字", type: "String",
+                inputType: "Text", persistType: "String", showInListPage: true
+            },
+            entityName: {
+                name: "entityName", label: "实体名", type: "String",
+                inputType: "Text", persistType: "String", showInListPage: true
+            },
+            criteria: {
+                name: "criteria", label: "条件", type: "String",
+                inputType: "TextArea", persistType: "String"
+            },
+            sortBy: {
+                name: "sortBy", label: "排序字段", type: "String",
+                inputType: "Text", persistType: "String"
+            },
+            sortOrder: {
+                name: "sortOrder", label: "顺序", type: "String",
+                inputType: "Text", persistType: "String"
+            }
+        }
+    },
     F_KeyValue: {
-        system: true, name: "F_KeyValue", label: "键值对",
+        system: true, type: "Component", name: "F_KeyValue", label: "键值对",
         db: DB.mongo, dbName: "main", tableName: "F_KeyValue",
         digestConfig: "key", fieldsForDigest: ["key"],
         fields: {
