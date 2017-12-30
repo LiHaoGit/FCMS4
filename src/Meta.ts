@@ -82,6 +82,7 @@ export async function aSaveEntityMeta(entityName: string,
 
     entities[entityName] = entityMeta
 
+    cleanEntities()
     await aWriteJSON(Config.metaFile, entities)
 }
 
@@ -89,6 +90,30 @@ export async function aRemoveEntityMeta(entityName: string) {
     delete entities[entityName]
 
     await aWriteJSON(Config.metaFile, entities)
+}
+
+// 假值字段一律移除，包括 false "" null undefined NaN 和空数组，保留 0
+function cleanEntities() {
+    const entityMetaList = _.values(entities)
+    for (const entityMeta of entityMetaList) {
+        cleanObject(entityMeta)
+        const fieldMetaList = _.values(entityMeta.fields)
+        for (const fieldMeta of fieldMetaList) {
+            cleanObject(fieldMeta)
+        }
+    }
+}
+
+// 假值字段一律移除，包括 false "" null undefined NaN 和空数组，保留 0
+function cleanObject(obj: any) {
+    const keys = Object.keys(obj)
+    for (const key of keys) {
+        const value = obj[key]
+        if (value !== 0 && !value
+            || _.isArray(value) && value.length === 0) {
+            delete obj[key]
+        }
+    }
 }
 
 // 将 HTTP 输入的实体或组件值规范化
