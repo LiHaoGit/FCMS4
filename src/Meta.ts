@@ -312,12 +312,12 @@ export function patchSystemFields(entityMeta: EntityMeta) {
     }
     fields._createdOn = {
         system: true, name: "_createdOn", label: "创建时间", type: "DateTime",
-        persistType: timestampPersistType,
+        persistType: timestampPersistType, showInListPage: true,
         inputType: "DateTime", noCreate: true, noEdit: true
     }
     fields._modifiedOn = {
         system: true, name: "_modifiedOn", label: "修改时间", type: "DateTime",
-        persistType: timestampPersistType,
+        persistType: timestampPersistType, showInListPage: true,
         inputType: "DateTime", noCreate: true, noEdit: true
     }
     fields._createdBy = {
@@ -656,33 +656,6 @@ const SystemEntities: EntityMetaMap = {
             errorMessage: {
                 name: "errorMessage", label: "错误消息", type: "String",
                 inputType: "Text"
-            }
-        }
-    },
-    F_SystemConfig: {
-        system: true,
-        name: "F_SystemConfig", label: "系统配置", db: DB.mongo,
-        dbName: "main", tableName: "F_SystemConfig",
-        fields: {
-            key: {
-                name: "key", label: "KEY", type: "String",
-                inputType: "Text", persistType: "String", showInListPage: true
-            },
-            mail: {
-                name: "systemMail", label: "发信邮箱", type: "String",
-                inputType: "Text", persistType: "String"
-            },
-            mailPassword: {
-                name: "mailPassword", label: "发信密码", type: "String",
-                inputType: "Text", persistType: "String"
-            },
-            mailHost: {
-                name: "mailHost", label: "发信HOST", type: "String",
-                inputType: "Text", persistType: "String"
-            },
-            mailPort: {
-                name: "mailPort", label: "发信PORT", type: "String",
-                inputType: "Text", persistType: "String"
             }
         }
     },

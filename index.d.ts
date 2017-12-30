@@ -40,7 +40,7 @@ interface MongoIndex {
 }
 interface EntityMeta {
     system?: boolean
-    type: string
+    type?: string
     _version?: number
     name: string
     label: string
