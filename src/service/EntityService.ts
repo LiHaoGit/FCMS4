@@ -5,6 +5,7 @@ import * as mongodb from "mongodb"
 
 import { UserError } from "../Errors"
 import { DB, getEntityMeta, parseId } from "../Meta"
+import { traceAccessService, traceQueryDB } from "../tuning/ServiceStats"
 import { objectToKeyValuePairString } from "../Util"
 import { aFireEntityCreated, aFireEntityRemoved,
     aFireEntityUpdated, aWithCache } from "./EntityServiceCache"
@@ -13,7 +14,9 @@ import * as MysqlServ from "./EntityServiceMysql"
 
 export async function aCreate(conn: ExecuteContext, entityName: string,
     instance: EntityValue): Promise<CreateResult> {
-    if (!_.size(instance)) throw new UserError("CreateEmpty", "CreateEmpty")
+
+    if (!_.size(instance)) throw new UserError("CreateEmpty")
+
     const entityMeta = getEntityMeta(entityName)
 
     instance._version = 1
@@ -107,14 +110,18 @@ export async function aFindOneById(conn: ExecuteContext, entityName: string,
         : (oOrInclude || {})) as FindOption
 
     const includedFields = o.includedFields || []
-
-    const cacheId = `${id}|${includedFields.join(",")}`
     const criteria = {_id: id}
 
-    return aWithCache(entityMeta, ["Id", cacheId], async() =>
-        entityMeta.db === DB.mysql
+    const cacheId = `${id}|${includedFields.join(",")}`
+
+    traceAccessService(entityName, "OneId", id)
+
+    return aWithCache(entityMeta, ["Id", cacheId], async() => {
+        traceQueryDB(entityName, "OneId", id)
+
+        return entityMeta.db === DB.mysql
             ? MysqlServ.aFindOneByCriteria(conn, entityMeta, criteria, o)
-            : MongoServ.aFindOneByCriteria(entityMeta, criteria, o))
+            : MongoServ.aFindOneByCriteria(entityMeta, criteria, o)})
 }
 
 export async function aFindOneByCriteria(conn: ExecuteContext,
@@ -126,18 +133,24 @@ export async function aFindOneByCriteria(conn: ExecuteContext,
     const o = ((_.isArray(oOrInclude)) ? {includedFields: oOrInclude}
         : (oOrInclude || {})) as FindOption
     const includedFields = o.includedFields || []
+    const criteriaString = JSON.stringify(criteria)
 
-    const cacheId = "OneByCriteria|" + JSON.stringify(criteria)
+    const cacheId = "OneByCriteria|" + criteriaString
         + "|" + includedFields.join(",")
 
-    return aWithCache(entityMeta, ["Other", cacheId], async() =>
-        entityMeta.db === DB.mysql
+    traceAccessService(entityName, "OneCriteria", criteriaString)
+
+    return aWithCache(entityMeta, ["Other", cacheId], async() => {
+        traceQueryDB(entityName, "OneCriteria", criteriaString)
+
+        return entityMeta.db === DB.mysql
             ? MysqlServ.aFindOneByCriteria(conn, entityMeta, criteria, o)
-            : MongoServ.aFindOneByCriteria(entityMeta, criteria, o))
+            : MongoServ.aFindOneByCriteria(entityMeta, criteria, o)})
 }
 
 export async function aList(conn: ExecuteContext, entityName: string,
     options: ListOption): Promise<PagingListResult | EntityPage> {
+
     let { criteria, pageNo, sort } = options
     const { pageSize, includedFields, withoutTotal} = options
     const entityMeta = getEntityMeta(entityName)
@@ -158,10 +171,14 @@ export async function aList(conn: ExecuteContext, entityName: string,
         sort, pageNo, pageSize, withoutTotal
     }
 
-    return aWithCache(entityMeta, ["Other", cacheId], async() =>
-        entityMeta.db === DB.mysql
+    traceAccessService(entityName, "ManyCriteria", criteriaString)
+
+    return aWithCache(entityMeta, ["Other", cacheId], async() => {
+        traceQueryDB(entityName, "ManyCriteria", criteriaString)
+
+        return entityMeta.db === DB.mysql
             ? MysqlServ.aList(conn, query)
-            : MongoServ.aList(entityMeta, query))
+            : MongoServ.aList(entityMeta, query)})
 }
 
 export async function aFindManyByCriteria(conn: ExecuteContext,

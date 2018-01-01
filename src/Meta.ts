@@ -724,6 +724,17 @@ const SystemEntities: EntityMetaMap = {
             }
         }
     },
+    F_SystemConfig: {
+        system: true, type: "Entity",
+        name: "F_SystemConfig", label: "系统配置", db: DB.mongo,
+        singleton: true,
+        fields: {
+            label: {
+                name: "label", label: "显示名", type: "String",
+                inputType: "Text"
+            }
+        }
+    },
     F_User: {
         system: true,
         idType: "String", name: "F_User", label: "用户", db: DB.mongo,

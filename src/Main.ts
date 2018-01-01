@@ -13,6 +13,8 @@ import * as Mongo from "./storage/MongoStore"
 // const RefactorMysqlTable = require("./storage/RefactorMysqlTable")
 import * as Redis from "./storage/RedisStore"
 import * as SystemInit from "./SystemInit"
+import { aStopPersistingTuningData,
+    startPersistingTuningData } from "./tuning/ServiceStats"
 import { addCommonRouteRules } from "./web/CommonRouterRules"
 import { Router } from "./web/Router"
 import * as WebServer from "./web/WebServer"
@@ -69,6 +71,9 @@ export async function aStart(appConfig: IConfig,
         addCommonRouteRules(router)
         if (addRouteRules) addRouteRules(router)
 
+        // 其他
+        startPersistingTuningData()
+
         logSystemInfo("Starting the web server...")
         await WebServer.aStart(router)
         webStarted = true
@@ -90,6 +95,8 @@ function stop() {
 
 async function aStop() {
     logSystemInfo("Disposing all other resources...")
+
+    await aStopPersistingTuningData()
 
     if (Config.cluster) await Redis.aDispose()
 

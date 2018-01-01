@@ -60,6 +60,7 @@ interface EntityMeta {
     noDelete?: boolean
     noEdit?: boolean
     history?: number
+    singleton?: boolean
     fields: {[k: string]: FieldMeta}
 }
 
@@ -202,5 +203,6 @@ interface IConfig {
     originConfigs: OriginConfig
     logConfigs: any
     errorCatcher: WebErrorCatcher | null
+    tuningFileDir?: string
     preprocess: ()=>void
 }

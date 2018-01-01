@@ -136,7 +136,7 @@ export function getMyRequestHeaders(ctx: koa.Context, ...names: string[]) {
     return _.map(names, n => ctx.headers[`X-FCMS-${n}`.toLowerCase()])
 }
 
-export function setIfNone(object: any, field: string, alt: any) {
+export function setIfNone<T>(object: any, field: string, alt: T): T {
     const v = object[field]
     if (!_.isNil(v)) return v
 
