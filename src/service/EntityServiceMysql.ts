@@ -42,8 +42,14 @@ export async function aRestoreHistory(conn: ExecuteContext,
     return null
 }
 
+export async function aGetHistoryItem(conn: ExecuteContext,
+    entityMeta: EntityMeta, id: any) {
+
+    return Promise.resolve(null)
+}
+
 // 列出历史纪录
 export async function aListHistory(conn: ExecuteContext,
-    entityMeta: EntityMeta, id: any, pageNo: number, pageSize: number) {
-    return {pageNo: 1, pageSize: 10, page: [], total: 0}
+    entityMeta: EntityMeta, id: any) {
+    return []
 }

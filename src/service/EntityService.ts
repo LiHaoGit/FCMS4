@@ -228,13 +228,23 @@ export async function aWithoutTransaction<T>(entityMeta: EntityMeta,
 }
 
 // 列出历史纪录
-export async function aListHistory(conn: ExecuteContext,
-    entityMeta: EntityMeta, id: any, pageNo: number, pageSize: number) {
+export async function aListHistory(conn: ExecuteContext, entityMeta: EntityMeta,
+    id: any) {
 
     // TODO history cache?
     return entityMeta.db === DB.mysql
-        ? MysqlServ.aListHistory(conn, entityMeta, id, pageNo, pageSize)
-        : MongoServ.aListHistory(entityMeta, id, pageNo, pageSize)
+        ? MysqlServ.aListHistory(conn, entityMeta, id)
+        : MongoServ.aListHistory(entityMeta, id)
+}
+
+// 查看一项历史详情
+export async function aGetHistoryItem(conn: ExecuteContext,
+    entityMeta: EntityMeta, id: any) {
+
+    // TODO history cache?
+    return entityMeta.db === DB.mysql
+        ? MysqlServ.aGetHistoryItem(conn, entityMeta, id)
+        : MongoServ.aGetHistoryItem(entityMeta, id)
 }
 
 // 从某个历史纪录中恢复

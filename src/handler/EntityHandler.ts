@@ -6,11 +6,11 @@ import _ = require("lodash")
 import { aClearAllCache } from "../cache/Cache"
 import { UserError } from "../Errors"
 import { logSystemDebug } from "../Log"
-import { formatEntityToHttp, getEntityMeta, parseEntity, parseId, parseIds,
-    parseListQueryValue } from "../Meta"
+import { formatEntitiesToHttp, formatEntityToHttp, getEntityMeta, parseEntity,
+    parseId, parseIds, parseListQueryValue } from "../Meta"
 import { aCreate, aFindOneByCriteria, aFindOneById as aFindOneByIdService,
-    aList, aListHistory, aRemoveManyByCriteria,
-    aRestoreHistory, aUpdateOneByCriteria,
+    aGetHistoryItem, aList, aListHistory,
+    aRemoveManyByCriteria, aRestoreHistory, aUpdateOneByCriteria,
     aWithoutTransaction, aWithTransaction } from "../service/EntityService"
 import { isUserOrRoleHasFieldAction, splitString,
     stringToBoolean, stringToInt } from "../Util"
@@ -459,20 +459,23 @@ export async function aListHistoryH(ctx: koa.Context) {
     const id = parseId(ctx.state.params.id, entityMeta)
     if (!id) throw new UserError("BadId", "BadId")
 
-    const query = ctx.query || {}
-    const pageNo = stringToInt(query._pageNo, 1) as number
-    let pageSize = stringToInt(query._pageSize, 20) as number
-    if (pageSize > 100) pageSize = 100
+    let history = await aWithoutTransaction(entityMeta, async conn =>
+        aListHistory(conn, entityMeta, id))
+    history = formatEntitiesToHttp(history, entityMeta)
+    ctx.body = history
+}
 
-    const r = await aWithoutTransaction(entityMeta, async conn =>
-        aListHistory(conn, entityMeta, id, pageNo, pageSize))
+export async function aGetHistoryItemH(ctx: koa.Context) {
+    const entityName = ctx.state.params.entityName
+    const entityMeta = getEntityMeta(entityName)
+    if (!entityMeta) throw new UserError("NoSuchEntity")
 
-    const page = r.page
-    removeNotShownFields(entityMeta, ctx.state.user, ...page)
+    const operator = ctx.state.user
 
-    r.page = _.map(page, i => formatEntityToHttp(i, entityMeta))
-
-    ctx.body = r
+    let history = await aWithoutTransaction(entityMeta, async conn =>
+        aGetHistoryItem(conn, entityMeta, ctx.state.params.id))
+    history = formatEntitiesToHttp(history, entityMeta)
+    ctx.body = history
 }
 
 export async function aRestoreHistoryH(ctx: koa.Context) {

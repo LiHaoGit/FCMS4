@@ -117,10 +117,10 @@ export function addCommonRouteRules(router: Router) {
     rrr.del("/cache", {action: "ClearEntityCache"},
         EntityHandler.aClearCache)
 
-    rrr.get("/entity-history/:entityName/:id", {authEntity: "getEntity"},
+    rrr.get("/history/list/:entityName/:id", {authEntity: "getEntity"},
         EntityHandler.aListHistoryH)
-    rrr.put("/entity-restore/:entityName/:id", {authEntity: "updateOneEntity"},
-        EntityHandler.aRestoreHistoryH)
+    rrr.get("/history/get/:entityName/:id", {authEntity: "getEntity"},
+        EntityHandler.aGetHistoryItemH)
 
     // ======================================
     // 文件

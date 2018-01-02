@@ -3,11 +3,12 @@
 import * as _ from "lodash"
 import * as mongodb from "mongodb"
 
-import { UniqueConflictError } from "../Errors"
+import { UniqueConflictError, UserError } from "../Errors"
 import { logSystemWarn } from "../Log"
 import { newObjectId } from "../Meta"
 import { getInsertedIdObject, getStore, getUpdateResult,
-    isIndexConflictError, toMongoCriteria } from "../storage/MongoStore"
+    isIndexConflictError, stringToObjectIdSilently,
+    toMongoCriteria } from "../storage/MongoStore"
 import { arrayToTrueObject } from "../Util"
 
 interface MongoUpdate {
@@ -85,6 +86,7 @@ async function aUpdateManyByCriteriaWithHistory(db: mongodb.Db,
 export async function aUpdateOneByCriteria(entityMeta: EntityMeta,
     criteria: GenericCriteria, instance: EntityValue,
     options?: UpdateOption) {
+
     const update = objectToMongoUpdate(instance)
     if (!update) return null
 
@@ -223,22 +225,27 @@ function objectToMongoUpdate(object: any): MongoUpdate | null {
 }
 
 // 列出历史纪录
-export async function aListHistory(entityMeta: EntityMeta, id: any,
-    pageNo: number, pageSize: number) {
-
+export async function aListHistory(entityMeta: EntityMeta, id: any) {
     const collectionName = entityMeta.tableName || entityMeta.name
     const db = await getStore(entityMeta.dbName || "main").aDatabase()
     const c = db.collection(collectionName + "_history")
-    const criteria = {_OldId: id}
-    const cursor = c.find(criteria) // TODO projection
-    pageNo = pageNo || 1
-    pageSize = pageSize || 10
-    cursor.skip((pageNo - 1) * pageSize).limit(pageSize)
+    const criteria = {_oldId: id}
+    const projection = {_modifiedOn: true, _modifiedBy: true, _version: true}
+    const cursor = c.find(criteria, projection)
+    const history = await cursor.toArray()
 
-    const page = await cursor.toArray()
-    const total = await c.count(criteria)
+    return history
+}
 
-    return {page, total, pageNo, pageSize}
+export async function aGetHistoryItem(entityMeta: EntityMeta, id: any) {
+    const collectionName = entityMeta.tableName || entityMeta.name
+    const db = await getStore(entityMeta.dbName || "main").aDatabase()
+    const c = db.collection(collectionName + "_history")
+
+    // 历史表的 ID 一律是 ObjectId
+    id = stringToObjectIdSilently(id)
+    if (!id) throw new UserError("BadId")
+    return c.findOne(id)
 }
 
 // 从某个历史纪录中恢复
