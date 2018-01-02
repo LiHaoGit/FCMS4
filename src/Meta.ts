@@ -328,7 +328,7 @@ export function patchSystemFields(entityMeta: EntityMeta) {
         system: true, name: "_id", label: "ID", type: idType,
         required: true,
         persistType: idPersistType, sqlColM: ObjectIdStringLength,
-        inputType: "Text", noCreate: true, noEdit: true, fastFilter: true
+        inputType: "Text", noCreate: true, noEdit: true, fastSearch: true
     }
     fields._version = {
         system: true, name: "_version", label: "修改版本", type: "Int",
@@ -756,12 +756,12 @@ const SystemEntities: EntityMetaMap = {
         fieldsForDigest: ["username", "nickname", "phone", "email"],
         fields: {
             username: {
-                name: "username", label: "用户名", asFastFilter: true,
+                name: "username", label: "用户名", fastSearch: true,
                 type: "String", inputType: "Text", persistType: "String",
                 showInListPage: true
             },
             nickname: {
-                name: "nickname", label: "昵称", asFastFilter: true,
+                name: "nickname", label: "昵称", fastSearch: true,
                 type: "String", inputType: "Text", persistType: "String",
                 showInListPage: true
             },
@@ -770,12 +770,12 @@ const SystemEntities: EntityMetaMap = {
                 inputType: "Password", persistType: "String"
             },
             phone: {
-                name: "phone", label: "手机", asFastFilter: true,
+                name: "phone", label: "手机", fastSearch: true,
                 type: "String", inputType: "Text", persistType: "String",
                 showInListPage: true
             },
             email: {
-                name: "email", label: "邮箱", asFastFilter: true,
+                name: "email", label: "邮箱", fastSearch: true,
                 type: "String",  inputType: "Text", persistType: "String",
                 showInListPage: true
             },
@@ -809,7 +809,7 @@ const SystemEntities: EntityMetaMap = {
         fields: {
             name: {
                 name: "name", label: "角色名", type: "String",
-                inputType: "Text", asFastFilter: true,
+                inputType: "Text", fastSearch: true,
                 persistType: "String", showInListPage: true
             },
             acl: {

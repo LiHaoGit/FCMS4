@@ -18,10 +18,9 @@ interface FieldMeta {
     inputType?: string
     noCreate?: boolean
     noEdit?: boolean
-    fastFilter?: boolean
+    fastSearch?: boolean
     optionsFunc?: string
     comment?: string
-    asFastFilter?: boolean
     inputFunc?: string
     editReadonly?: boolean
     notShow?: boolean

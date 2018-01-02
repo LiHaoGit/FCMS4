@@ -5,6 +5,7 @@ import _ = require("lodash")
 
 import { aClearAllCache } from "../cache/Cache"
 import { UserError } from "../Errors"
+import { logSystemDebug } from "../Log"
 import { formatEntityToHttp, getEntityMeta, parseEntity, parseId, parseIds,
     parseListQueryValue } from "../Meta"
 import { aCreate, aFindOneByCriteria, aFindOneById as aFindOneByIdService,
@@ -258,24 +259,27 @@ export function parseListQuery(entityMeta: EntityMeta, query: any): ListOption {
     if (pageSize > 200) pageSize = 200 // TODO 控制量
 
     // 整理筛选查询条件
-    const fastFilter = query._filter
-    if (fastFilter) {
+    // 三种情况：fast, field=value, _criteria
+    // 确保查询值是正确类型，在后面统一由  parseListQueryValue 做
+    const fastSearch = query._filter
+    if (fastSearch) {
         const orList = []
-        orList.push({field: "_id", operator: "==", value: fastFilter})
+        // orList.push({field: "_id", operator: "==", value: fastSearch})
 
         for (const fieldName in entityMeta.fields) {
             const fieldMeta = entityMeta.fields[fieldName]
-            if (fieldMeta.asFastFilter) orList.push({
-                field: fieldName,
-                operator: "contain",
-                value: fastFilter
-            })
+            // 只有字符串能模糊
+            if (fieldMeta.fastSearch) {
+                const operator = fieldMeta.type === "String" ? "contain" : "=="
+                orList.push({ field: fieldName, operator, value: fastSearch })
+            }
         }
         criteria = {__type: "relation", relation: "or", items: orList}
     } else {
         if (query._criteria) {
             try {
                 criteria = JSON.parse(query._criteria)
+                criteria.__type = "relation"
             } catch (e) {
                 throw new UserError("BadQueryCriteria")
             }
@@ -292,14 +296,15 @@ export function parseListQuery(entityMeta: EntityMeta, query: any): ListOption {
                 __type: "relation", relation: "and", items: criteriaList
             } : null
         }
-
-        if (criteria) {
-            parseListQueryValue(criteria, entityMeta)
-            criteria.__type = "relation"
-        }
     }
 
-    // Log.debug('criteria', criteria)
+    if (criteria) {
+        // logSystemDebug("criteria1", criteria)
+
+        parseListQueryValue(criteria, entityMeta)
+
+        // logSystemDebug("criteria2", criteria)
+    }
 
     // 整理排序所用字段
     if (query._sort) {
