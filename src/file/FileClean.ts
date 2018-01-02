@@ -39,11 +39,10 @@ async function aListUsingFiles(extensions: string[]) {
 async function aListUsingFilesOfEntity(entityMeta: EntityMeta,
     usingFiles: string[], extensions: string[]) {
 
-    const fileFields = mayContainFileFields(entityMeta)
-    const fieldNames = Object.keys(fileFields)
-    const projection = arrayToTrueObject(fieldNames) as {[k: string]: boolean}
+    const fileFieldNames = mayContainFileFields(entityMeta)
+    const projection = arrayToTrueObject(fileFieldNames) || {}
 
-    logSystemInfo("Analyze file fields: ", projection)
+    logSystemInfo("Analyze file fields: ", entityMeta.name, fileFieldNames)
 
     const db = await getStore(entityMeta.dbName || "main").aDatabase()
     let tableName = entityMeta.tableName || entityMeta.name
@@ -51,23 +50,22 @@ async function aListUsingFilesOfEntity(entityMeta: EntityMeta,
     for (tableName of tableNames) {
         logSystemInfo("Analyze table " + tableName)
         const c = db.collection(tableName)
-        const cursor = c.find({}, projection)
+        const cursor = c.find({}, {fields: projection})
         // let i = 0
         while (await cursor.hasNext()) {
             const entity = await cursor.next()
             // console.log("entity num: " + ++i)
-            extractFileFromEntity(entity, fieldNames, fileFields, usingFiles,
-                extensions)
+            extractFileFromEntity(entity, entityMeta, usingFiles, extensions)
         }
     }
 }
 
-function extractFileFromEntity(entity: any, fieldNames: string[],
-    fileFields: {[fieldName: string]: FieldMeta},
+function extractFileFromEntity(entity: any, entityMeta: EntityMeta,
     usingFiles: string[], extensions: string[]) {
 
+    const fieldNames = Object.keys(entityMeta.fields)
     for (const field of fieldNames) {
-        const fieldMeta = fileFields[field]
+        const fieldMeta = entityMeta.fields[field]
         const v = _.get(entity, field)
         if (_.isNil(v)) continue
         if (_.isArray(v)) {
@@ -86,6 +84,11 @@ function extractFileFromValue(v: any, fieldMeta: FieldMeta, files: string[],
         extractFilesFromJSON(v, extensions, files)
     } else if (fieldMeta.inputType === "RichText") {
         extractFilesFromHtml(v, files)
+    } else if (fieldMeta.type === "Component") {
+        if (!fieldMeta.refEntity || !v) return
+        logSystemInfo("Analyze Component", fieldMeta.refEntity)
+        const refEntityMeta = getEntityMeta(fieldMeta.refEntity)
+        extractFileFromEntity(v, refEntityMeta, files, extensions)
     } else {
         if (v.path) files.push(v.path)
     }
@@ -122,29 +125,21 @@ function extractFilesFromJSON(json: any, extensions: string[],
 }
 
 // 可能包含文件的字段
-// 对于组件，使用 "user.avatar" 之类的连点的形式
 function mayContainFileFields(entityMeta: EntityMeta) {
-    const fileFields: {[fieldName: string]: FieldMeta} = {}
-    _mayContainFileFields(entityMeta, "", fileFields)
-    return fileFields
-}
-
-function _mayContainFileFields(entityMeta: EntityMeta, fieldPrefix: string,
-    fields: {[fieldName: string]: FieldMeta}) {
     const fieldNames = Object.keys(entityMeta.fields)
+    const fileFieldNames: string[] = []
     for (const fieldName of fieldNames) {
         const fieldMeta = entityMeta.fields[fieldName]
         if (fieldMeta.type === "Image"
             || fieldMeta.type === "File"
             || fieldMeta.type === "Object"
             || fieldMeta.inputType === "RichText") {
-                fields[fieldPrefix + fieldName] = fieldMeta
+                fileFieldNames.push(fieldName)
         } else if (fieldMeta.type === "Component" && fieldMeta.refEntity) {
-            const refEntity = getEntityMeta(fieldMeta.refEntity)
-            _mayContainFileFields(refEntity, `${fieldPrefix}${fieldName}.`
-                , fields)
+            fileFieldNames.push(fieldName)
         }
     }
+    return fileFieldNames
 }
 
 async function aListExistedFiles(cleanIncludeDirs: string[]) {
@@ -175,11 +170,12 @@ export async function aAnalyzeFile(cleanIncludeDirs: string[]) {
     await aWriteFile(file, existed.extensions.join("\n"))
 
     const usingFiles = await aListUsingFiles(existed.extensions)
+    const usingFilesSet = new Set(usingFiles)
+
     file = Path.join(Config.fileDir, "using.txt")
-    await aWriteFile(file, usingFiles.join("\n"))
+    await aWriteFile(file, [...usingFilesSet].join("\n"))
 
     const existedFilesSet = new Set(existed.fileList)
-    const usingFilesSet = new Set(usingFiles)
 
     const removable = existed.fileList.filter(x => !usingFilesSet.has(x))
     file = Path.join(Config.fileDir, "removable.txt")
