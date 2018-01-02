@@ -796,7 +796,7 @@ const SystemEntities: EntityMetaMap = {
             },
             acl: {
                 name: "acl", label: "ACL", type: "Object",
-                multiple: false, inputFunc: "F.inputACL",
+                multiple: false, inputFunc: "JSON",
                 persistType: "Document"
             }
         }
@@ -814,7 +814,7 @@ const SystemEntities: EntityMetaMap = {
             },
             acl: {
                 name: "acl",  label: "ACL",  type: "Object",
-                multiple: false, inputFunc: "F.inputACL",
+                multiple: false, inputFunc: "JSON",
                 persistType: "Document"
             }
         }
