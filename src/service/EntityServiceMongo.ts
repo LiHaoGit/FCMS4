@@ -9,7 +9,7 @@ import { newObjectId } from "../Meta"
 import { getInsertedIdObject, getStore, getUpdateResult,
     isIndexConflictError, stringToObjectIdSilently,
     toMongoCriteria } from "../storage/MongoStore"
-import { arrayToTrueObject } from "../Util"
+import { arrayToBooleanObject, arrayToTrueObject } from "../Util"
 
 interface MongoUpdate {
     $set?: any
@@ -145,8 +145,29 @@ export async function aFindOneByCriteria(entityMeta: EntityMeta,
 
     const db = await getStore(entityMeta.dbName || "main").aDatabase()
     const c = db.collection(collectionName)
-    const projection = arrayToTrueObject(o && o.includedFields) || {}
+    const projection = includedFieldsToProjection(o && o.includedFields)
+    console.log(projection)
     return c.findOne(nativeCriteria, projection)
+}
+
+function includedFieldsToProjection(includedFields?: string[]) {
+    if (!(includedFields && includedFields.length)) return {}
+    const included: string[] = []
+    const excluded: string[] = []
+    for (const field of includedFields) {
+        if (field[0] === "-") {
+            excluded.push(field.substring(1))
+        } else if (field[0] === "+") {
+            included.push(field.substring(1))
+        } else {
+            included.push(field)
+        }
+    }
+    if (excluded.length) {
+        return arrayToBooleanObject(false, excluded) as {[k: string]: boolean}
+    } else {
+        return arrayToBooleanObject(true, included) as {[k: string]: boolean}
+    }
 }
 
 // sort 为 mongo 原生格式
@@ -156,7 +177,7 @@ export async function aList(entityMeta: EntityMeta, options: ListOption)
     const { criteria, sort, includedFields, withoutTotal } = options
     const collectionName = entityMeta.tableName || entityMeta.name
     const nativeCriteria = toMongoCriteria(criteria)
-    const projection = arrayToTrueObject(includedFields) || {}
+    const projection = includedFieldsToProjection(includedFields)
 
     const db = await getStore(entityMeta.dbName || "main").aDatabase()
     const c = db.collection(collectionName)

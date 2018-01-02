@@ -99,10 +99,14 @@ export function stringToBoolean(value: string) {
 }
 
 export function arrayToTrueObject(array?: string[]) {
+    return arrayToBooleanObject(true, array)
+}
+
+export function arrayToBooleanObject(boolValue: boolean, array?: string[]) {
     if (!array) return null
 
     const o: {[s: string]: boolean} = {}
-    for (const a of array) o[a] = true
+    for (const a of array) o[a] = boolValue
     return o
 }
 

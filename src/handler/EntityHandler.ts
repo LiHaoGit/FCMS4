@@ -8,7 +8,7 @@ import { UserError } from "../Errors"
 import { logSystemDebug } from "../Log"
 import { formatEntitiesToHttp, formatEntityToHttp, getEntityMeta, parseEntity,
     parseId, parseIds, parseListQueryValue } from "../Meta"
-import { aCreate, aFindOneByCriteria, aFindOneById as aFindOneByIdService,
+import { aCreate, aFindOneByCriteria, aFindOneById,
     aGetHistoryItem, aList, aListHistory,
     aRemoveManyByCriteria, aRestoreHistory, aUpdateOneByCriteria,
     aWithoutTransaction, aWithTransaction } from "../service/EntityService"
@@ -175,7 +175,7 @@ export async function aDeleteEntityInBatch(ctx: koa.Context) {
     ctx.status = 204
 }
 
-export async function aFindOneById(ctx: koa.Context) {
+export async function aFindOneByIdH(ctx: koa.Context) {
     const entity = await _aFindOneById(ctx, ctx.state.params.entityName,
         ctx.state.params.id)
 
@@ -199,11 +199,11 @@ export async function _aFindOneById(ctx: koa.Context, entityName: string,
 
     const criteria = {_id: id}
 
-    const opt: FindOption = parseFindOneQuery(entityMeta, ctx.query)
+    const o: FindOption = parseFindOneQuery(entityMeta, ctx.query)
 
     let entity = await aWithoutTransaction(entityMeta, async conn =>
         aInterceptGet(entityName, conn, criteria, operator, async() =>
-        aFindOneByIdService(conn, entityName, id, opt)))
+        aFindOneById(conn, entityName, id, o)))
 
     if (entity) {
         removeNotShownFields(entityMeta, ctx.state.user, entity)
@@ -328,8 +328,9 @@ export function parseListQuery(entityMeta: EntityMeta, query: any): ListOption {
  * @param query query
  */
 export function parseFindOneQuery(entityMeta: EntityMeta,
-        query: any): FindOption {
-    const includedFields = splitString(query._includedFields, ",") || undefined
+    query: any): FindOption {
+
+    const includedFields = splitString(query._includedFields, ",")
     if (includedFields)
         return {includedFields}
     else

@@ -97,7 +97,7 @@ export function addCommonRouteRules(router: Router) {
     rrr.get("/entity/:entityName", {authEntity: "listEntity"},
         EntityHandler.aListH)
     rrr.get("/entity/:entityName/:id", {authEntity: "getEntity"},
-        EntityHandler.aFindOneById)
+        EntityHandler.aFindOneByIdH)
     rrr.post("/entity/:entityName", {authEntity: "createEntity"},
         EntityHandler.aCreateEntity)
     rrr.post("/entity/:entityName/batch", {authEntity: "createEntity"},
