@@ -21,7 +21,7 @@ export async function aAcceptToken(ctx: koa.Context) {
 
     const options = {
         method: "POST",
-        uri: originConfig.ssoServer + "/sso/validate-token",
+        uri: originConfig.ssoServer + "/api/c/sso/validate-token",
         body: {key: originConfig.ssoKey, token, origin},
         json: true
     }
@@ -57,6 +57,6 @@ export async function aSignOut(ctx: koa.Context) {
     callback = callback ? decodeURIComponent(callback) :
         originConfig.defaultCallbackUrl
 
-    ctx.redirect(originConfig.ssoServer + "/sso/sign-out?callback=" +
+    ctx.redirect(originConfig.ssoServer + "/api/c/sso/sign-out?callback=" +
         encodeURIComponent(callback))
 }

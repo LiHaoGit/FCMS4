@@ -97,7 +97,7 @@ async function aCatchError(ctx: Koa.Context, next: any) {
             if (e instanceof Error401) {
                 const originConfig = Config.originConfigs[ctx.request.origin]
                 // console.log(originConfig, originConfig)
-                const signInUrl = originConfig.ssoServer + "/sso/auth"
+                const signInUrl = originConfig.ssoServer + "/api/c/sso/auth"
                 if (routeInfo.isPage) {
                     ctx.redirect(signInUrl)
                 } else {
