@@ -146,7 +146,6 @@ export async function aFindOneByCriteria(entityMeta: EntityMeta,
     const db = await getStore(entityMeta.dbName || "main").aDatabase()
     const c = db.collection(collectionName)
     const projection = includedFieldsToProjection(o && o.includedFields)
-    console.log(projection)
     return c.findOne(nativeCriteria, projection)
 }
 
