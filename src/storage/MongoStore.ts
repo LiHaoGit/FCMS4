@@ -163,41 +163,53 @@ function convertMongoCriteria(criteria: GenericCriteria,
         const operator = criteria.operator
         const value = criteria.value
         const field = criteria.field
-        const fc = mongoCriteria[field] = mongoCriteria[field] || {}
         switch (operator) {
         case "==":
             mongoCriteria[field] = value
             break
         case "!=":
             // TODO 对于部分运算符要检查 comparedValue 不为 null/undefined/NaN
-            fc.$ne = value
+            mergeFieldCriteria(mongoCriteria, field, {$ne: value})
             break
         case ">":
-            fc.$gt = value
+            mergeFieldCriteria(mongoCriteria, field, {$gt: value})
             break
         case ">=":
-            fc.$gte = value
+            mergeFieldCriteria(mongoCriteria, field, {$gte: value})
             break
         case "<":
-            fc.$lt = value
+            mergeFieldCriteria(mongoCriteria, field, {$lt: value})
             break
         case "<=":
-            fc.$lte = value
+            mergeFieldCriteria(mongoCriteria, field, {$lte: value})
             break
         case "in":
-            fc.$in = value
+            mergeFieldCriteria(mongoCriteria, field, {$in: value})
             break
         case "nin":
-            fc.$nin = value
+            mergeFieldCriteria(mongoCriteria, field, {$nin: value})
             break
         case "start":
-            fc.$regex = "^" + value
+            if (value)
+                mergeFieldCriteria(mongoCriteria, field, {$regex: "^" + value})
             break
         case "end":
-            fc.$regex = value + "$"
+            if (value)
+                mergeFieldCriteria(mongoCriteria, field, {$regex: value + "$"})
             break
         case "contain":
-            fc.$regex = value
+            if (value)
+                mergeFieldCriteria(mongoCriteria, field, {$regex: value})
+            break
         }
+    }
+}
+
+function mergeFieldCriteria(mongoCriteria: any, field: string, add: any) {
+    const fc = mongoCriteria[field]
+    if (fc) {
+        Object.assign(fc, add)
+    } else {
+        mongoCriteria[field] = add
     }
 }
