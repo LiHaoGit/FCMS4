@@ -264,8 +264,6 @@ export function parseListQuery(entityMeta: EntityMeta, query: any): ListOption {
     const fastSearch = query._filter
     if (fastSearch) {
         const orList = []
-        // orList.push({field: "_id", operator: "==", value: fastSearch})
-
         for (const fieldName in entityMeta.fields) {
             const fieldMeta = entityMeta.fields[fieldName]
             // 只有字符串能模糊
@@ -273,6 +271,10 @@ export function parseListQuery(entityMeta: EntityMeta, query: any): ListOption {
                 const operator = fieldMeta.type === "String" ? "contain" : "=="
                 orList.push({ field: fieldName, operator, value: fastSearch })
             }
+        }
+        // 不重复添加 id 搜索，但也不能缺
+        if (!entityMeta.fields._id.fastSearch) {
+            orList.push({field: "_id", operator: "==", value: fastSearch})
         }
         criteria = {__type: "relation", relation: "or", items: orList}
     } else {
