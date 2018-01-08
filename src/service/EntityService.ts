@@ -193,6 +193,20 @@ export async function aFindManyByCriteria(conn: ExecuteContext,
     return aList(conn, entityName, o) as Promise<EntityPage>
 }
 
+export async function aFindManyIdsByCriteria(conn: ExecuteContext,
+    entityName: string, o?: ListOption): Promise<any[]> {
+
+    const o2 = o || {}
+    o2.includedFields = ["_id"]
+
+    const entities = await aFindManyByCriteria({}, entityName, o2)
+    if (entities.length) {
+        return entities.map(e => e._id)
+    } else {
+        return []
+    }
+}
+
 export async function aFindManyByIds(conn: ExecuteContext, entityName: string,
     ids: any[], oOrInclude: ListOption | string[]): Promise<EntityPage> {
 
