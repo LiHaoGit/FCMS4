@@ -210,190 +210,25 @@ export interface IConfig {
 }
 
 // 导出相关接口
-import { ObjectID } from "bson"
-import { Context } from "koa"
-import { URL } from "url"
+export * from "./cache/Cache"
+export * from "./Errors"
+export * from "./FileUtil"
+export * from "./handler/EntityHandler"
+export * from "./handler/EntityInterceptor"
+export * from "./handler/UploadHandler"
+export * from "./Log"
+export * from "./Meta"
+export * from "./service/EntityService"
+export * from "./storage/MongoStore"
+export * from "./Util"
 
-import {
-    aClearAllCache,
-    aGetObject,
-    aGetString,
-    aSetObject,
-    aSetString,
-    aUnset
-} from "./cache/Cache"
-import {
-    Error401, Error403, MyError, SystemError, UniqueConflictError, UserError
-} from "./Errors"
-import {
-    aFileExists,
-    aIsDir,
-    aListFilesRecursive,
-    aMakeDirRecursive,
-    aMoveFileTo,
-    aReadDir,
-    aReadJSON,
-    aRemoveFile,
-    aWriteFile,
-    aWriteJSON
-} from "./FileUtil"
-import {
-    _aCreateEntity,
-    _aFindOneById,
-    _aList,
-    _aUpdateEntityById
-} from "./handler/EntityHandler"
-import {
-    aInterceptCreate,
-    aInterceptDelete,
-    aInterceptGet,
-    aInterceptList,
-    aInterceptUpdate
-} from "./handler/EntityInterceptor"
-import {
-    aUploadUtil,
-    File
-} from "./handler/UploadHandler"
-import {
-    logSystemDebug,
-    logSystemError,
-    logSystemInfo,
-    logSystemWarn
-} from "./Log"
-import {
-    checkPasswordEquals, formatEntitiesToHttp, formatEntityToHttp,
-    formatFieldToHttp, getMetaForFront, newObjectId, parseEntity,
-    parseFieldValue, parseId, parseIds, parseListQueryValue
-} from "./Meta"
-import {
-    aCreate, aFindManyByCriteria, aFindManyByIds, aFindManyIdsByCriteria,
-    aFindOneByCriteria, aFindOneById, aGetHistoryItem, aList, aListHistory,
-    aRemoveManyByCriteria, aRestoreHistory, aUpdateManyByCriteria,
-    aUpdateOneByCriteria, aWithoutTransaction, aWithTransaction
-} from "./service/EntityService"
-import {
-    arrayToBooleanObject,
-    arrayToTrueObject,
-    dateToLong,
-    entityListToIdMap,
-    firstValueOfObject,
-    getMyRequestHeaders,
-    getSingedPortedCookies,
-    getUrlOriginWithPort,
-    inObjectIds,
-    isUserHasFieldAction,
-    isUserOrRoleHasFieldAction,
-    jsObjectToTypedJSON,
-    listToMap,
-    longToDate,
-    objectIdsEquals,
-    objectToKeyValuePairString,
-    setIfNone,
-    setSingedPortedCookies,
-    splitString,
-    stringToBoolean,
-    stringToFloat,
-    stringToInt,
-    trimString,
-    typedJSONToJsObject
+// export * form 
+import config from "./Config"
 
-} from "./Util"
-
-export const EntityInterceptor = {
-    aInterceptCreate,
-    aInterceptDelete,
-    aInterceptGet,
-    aInterceptList,
-    aInterceptUpdate
-}
+export const Config = config
 
 export { Router, RouteRuleRegisters } from "./web/Router"
 
 export { aStart } from "./Main"
 
 export { extension } from "./Extension"
-
-export const Cache = {
-    aClearAllCache,
-    aGetObject,
-    aGetString,
-    aSetObject,
-    aSetString,
-    aUnset
-}
-
-export const UploadHandler = {
-    aUploadUtil
-}
-
-export const Log = {
-    logSystemDebug,
-    logSystemError,
-    logSystemInfo,
-    logSystemWarn
-}
-
-export const FileUtil = {
-    aFileExists,
-    aIsDir,
-    aListFilesRecursive,
-    aMakeDirRecursive,
-    aMoveFileTo,
-    aReadDir,
-    aReadJSON,
-    aRemoveFile,
-    aWriteFile,
-    aWriteJSON
-}
-
-export const Util = {
-    jsObjectToTypedJSON,
-    typedJSONToJsObject,
-    stringToInt,
-    stringToFloat,
-    trimString,
-    longToDate,
-    dateToLong,
-    stringToBoolean,
-    arrayToTrueObject,
-    arrayToBooleanObject,
-    objectToKeyValuePairString,
-    inObjectIds,
-    getSingedPortedCookies,
-    setSingedPortedCookies,
-    getMyRequestHeaders,
-    setIfNone,
-    isUserHasFieldAction,
-    isUserOrRoleHasFieldAction,
-    splitString,
-    getUrlOriginWithPort,
-    firstValueOfObject,
-    entityListToIdMap,
-    listToMap,
-    objectIdsEquals
-}
-
-export const EntityService = {
-    aCreate,
-    aFindManyByCriteria, aFindManyByIds, aFindManyIdsByCriteria,
-    aFindOneByCriteria, aFindOneById, aGetHistoryItem, aList, aListHistory,
-    aRemoveManyByCriteria, aRestoreHistory, aUpdateManyByCriteria,
-    aUpdateOneByCriteria, aWithoutTransaction, aWithTransaction
-}
-
-export const EntityHandler = {
-    aCreateEntity: _aCreateEntity,
-    aFindOneById: _aFindOneById,
-    aList: _aList,
-    aUpdateEntityById: _aUpdateEntityById
-}
-
-export const Errors = {
-    Error401, Error403, MyError, SystemError, UniqueConflictError, UserError
-}
-
-export const Meta = {
-    checkPasswordEquals, formatEntitiesToHttp, formatEntityToHttp,
-    formatFieldToHttp, getMetaForFront, newObjectId, parseEntity,
-    parseFieldValue, parseId, parseIds, parseListQueryValue
-}
