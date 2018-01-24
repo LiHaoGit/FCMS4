@@ -2,10 +2,45 @@
     "extends": "tslint:recommended",
     "rules": {
         "adjacent-overload-signatures": true,
-        "member-access": [true, "no-public"],
-        "member-ordering": [true, {"order": [
-            "static-field", "instance-field", "constructor", "instance-method"
-          ]}],
+        "member-access": [
+            true,
+            "no-public"
+        ],
+        "member-ordering": [
+            true,
+            {
+                "order": [
+                    "static-field",
+                    "instance-field",
+                    "constructor",
+                    "instance-method"
+                ]
+            }
+        ],
+        "ban-types": {
+            "options": [
+                [
+                    "Object",
+                    "Avoid using the `Object` type. Did you mean `object`?"
+                ],
+                [
+                    "Function",
+                    "Avoid using the `Function` type. Prefer a specific function type, like `() => void`, or use `ts.AnyFunction`."
+                ],
+                [
+                    "Boolean",
+                    "Avoid using the `Boolean` type. Did you mean `boolean`?"
+                ],
+                [
+                    "Number",
+                    "Avoid using the `Number` type. Did you mean `number`?"
+                ],
+                [
+                    "String",
+                    "Avoid using the `String` type. Did you mean `string`?"
+                ]
+            ]
+        },
         "no-any": false,
         "no-empty-interface": true,
         "no-import-side-effect": true,
@@ -21,36 +56,36 @@
         "only-arrow-functions": false,
         "prefer-for-of": true,
         "promise-function-async": false,
-        // "typedef": false,
         "typedef-whitespace": [
             true,
             {
-              "call-signature": "nospace",
-              "index-signature": "nospace",
-              "parameter": "nospace",
-              "property-declaration": "nospace",
-              "variable-declaration": "nospace"
+                "call-signature": "nospace",
+                "index-signature": "nospace",
+                "parameter": "nospace",
+                "property-declaration": "nospace",
+                "variable-declaration": "nospace"
             },
             {
-              "call-signature": "onespace",
-              "index-signature": "onespace",
-              "parameter": "onespace",
-              "property-declaration": "onespace",
-              "variable-declaration": "onespace"
+                "call-signature": "onespace",
+                "index-signature": "onespace",
+                "parameter": "onespace",
+                "property-declaration": "onespace",
+                "variable-declaration": "onespace"
             }
-          ],
+        ],
         "unified-signatures": true,
         "await-promise": true,
-        // "ban": [ true, "eval" ],
         "curly": false,
         "forin": false,
-        // "import-blacklist": true,
         "no-conditional-assignment": true,
         "no-console": false,
         "no-construct": true,
         "no-debugger": true,
         "no-duplicate-super": true,
-        "no-duplicate-variable": [true, "check-parameters"],
+        "no-duplicate-variable": [
+            true,
+            "check-parameters"
+        ],
         "no-empty": true,
         "no-floating-promises": false,
         "no-for-in-array": true,
@@ -66,14 +101,24 @@
         "no-string-throw": true,
         "no-switch-case-fall-through": true,
         "no-this-assignment": false,
-        "no-unbound-method": [true, "ignore-static"],
+        "no-unbound-method": [
+            true,
+            "ignore-static"
+        ],
         "no-unsafe-any": false,
         "no-unsafe-finally": true,
-        "no-unused-expression": [true, "allow-fast-null-checks", "allow-new"],
+        "no-unused-expression": [
+            true,
+            "allow-fast-null-checks",
+            "allow-new"
+        ],
         "no-unused-variable": true,
         "no-use-before-declare": true,
         "no-var-keyword": true,
-        "prefer-conditional-expression": [true, "check-else-if"],
+        "prefer-conditional-expression": [
+            true,
+            "check-else-if"
+        ],
         "prefer-object-spread": true,
         "radix": true,
         "restrict-plus-operands": false,
@@ -84,24 +129,46 @@
         "typeof-compare": true,
         "use-default-type-parameter": true,
         "use-isnan": true,
-        "cyclomatic-complexity": [true, 30],
+        "cyclomatic-complexity": [
+            true,
+            30
+        ],
         "eofline": true,
-        "indent": [true, "spaces", 4],
-        "max-line-length": [true, 80],
+        "indent": [
+            true,
+            "spaces",
+            4
+        ],
+        "max-line-length": [
+            true,
+            80
+        ],
         "no-duplicate-imports": true,
         "no-mergeable-namespace": true,
         "no-require-imports": false,
         "object-literal-sort-keys": false,
         "prefer-const": true,
-        "trailing-comma": [true, {"multiline": "never", "singleline": "never"}],
+        "trailing-comma": [
+            true,
+            {
+                "multiline": "never",
+                "singleline": "never"
+            }
+        ],
         "align": false,
         "array-type": false,
-        "arrow-parens": [true, "ban-single-arg-parens"],
+        "arrow-parens": [
+            true,
+            "ban-single-arg-parens"
+        ],
         "arrow-return-shorthand": true,
         "binary-expression-operand-order": false,
         "callable-types": true,
         "class-name": true,
-        "comment-format": [true, "check-space"],
+        "comment-format": [
+            true,
+            "check-space"
+        ],
         "encoding": true,
         "import-spacing": true,
         "interface-over-type-literal": true,
@@ -109,35 +176,73 @@
         "new-parens": true,
         "no-angle-bracket-type-assertion": true,
         "no-boolean-literal-compare": true,
-        "no-consecutive-blank-lines": [true, 2],
+        "no-consecutive-blank-lines": [
+            true,
+            2
+        ],
         "no-irregular-whitespace": true,
         "no-parameter-properties": false,
-        "no-trailing-whitespace": [true, "ignore-comments"],
+        "no-trailing-whitespace": [
+            true,
+            "ignore-comments"
+        ],
         "no-unnecessary-callback-wrapper": true,
         "no-unnecessary-initializer": true,
         "no-unnecessary-qualifier": true,
         "number-literal-format": false,
-        "object-literal-key-quotes": [true, "consistent-as-needed"],
+        "object-literal-key-quotes": [
+            true,
+            "consistent-as-needed"
+        ],
         "object-literal-shorthand": true,
-        "one-line": [true, "check-catch", "check-finally", "check-else",
-            "check-open-brace", "check-whitespace"],
+        "one-line": [
+            true,
+            "check-catch",
+            "check-finally",
+            "check-else",
+            "check-open-brace",
+            "check-whitespace"
+        ],
         "one-variable-per-declaration": false,
         "ordered-imports": true,
         "prefer-function-over-method": true,
         "prefer-method-signature": false,
         "prefer-switch": false,
         "prefer-template": false,
-        "quotemark": [true, "double", "avoid-escape", "avoid-template"],
+        "quotemark": [
+            true,
+            "double",
+            "avoid-escape",
+            "avoid-template"
+        ],
         "return-undefined": false,
-        "space-before-function-paren": [true, "never"],
-        "space-within-parens": [true, 0],
+        "space-before-function-paren": [
+            true,
+            "never"
+        ],
+        "space-within-parens": [
+            true,
+            0
+        ],
         "switch-final-break": false,
         "type-literal-delimiter": true,
-        "whitespace": [true, "check-branch", "check-decl", "check-operator",
-            "check-module", "check-separator", "check-rest-spread",
-            "check-type", "check-typecast", "check-type-operator",
-            "check-preblock"],
-        "semicolon": [true, "never"],
+        "whitespace": [
+            true,
+            "check-branch",
+            "check-decl",
+            "check-operator",
+            "check-module",
+            "check-separator",
+            "check-rest-spread",
+            "check-type",
+            "check-typecast",
+            "check-type-operator",
+            "check-preblock"
+        ],
+        "semicolon": [
+            true,
+            "never"
+        ],
         "interface-name": false,
         "max-classes-per-file": false,
         "no-bitwise": false
