@@ -244,6 +244,13 @@ import {
     _aUpdateEntityById
 } from "./handler/EntityHandler"
 import {
+    aInterceptCreate,
+    aInterceptDelete,
+    aInterceptGet,
+    aInterceptList,
+    aInterceptUpdate
+} from "./handler/EntityInterceptor"
+import {
     aUploadUtil,
     File
 } from "./handler/UploadHandler"
@@ -291,6 +298,20 @@ import {
     typedJSONToJsObject
 
 } from "./Util"
+
+export const EntityInterceptor = {
+    aInterceptCreate,
+    aInterceptDelete,
+    aInterceptGet,
+    aInterceptList,
+    aInterceptUpdate
+}
+
+export { Router, RouteRuleRegisters } from "./web/Router"
+
+export { aStart } from "./Main"
+
+export { extension } from "./Extension"
 
 export const Cache = {
     aClearAllCache,
