@@ -1,7 +1,19 @@
 {
   "name": "fcms4",
-  "version": "1.1.8",
-  "typings": "./index.d.ts",
+  "version": "1.0.0",
+  "typings": "./lib/index.d.ts",
+  "main": "./lib/index.js",
+  "author": {
+    "name": "Yuan Yao",
+    "email": "dreamport@qq.com"
+  },
+  "bugs": {
+    "url": "https://github.com/ReDreamport/FCMS4/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ReDreamport/FCMS4"
+  },  
   "dependencies": {
     "bluebird": "^3.5.1",
     "bunyan": "^1.8.12",
@@ -29,6 +41,12 @@
     "@types/redis": "^2.8.1",
     "@types/request-promise-native": "^1.0.10",
     "@types/server-destroy": "^1.0.0"
+  },
+  "files": [
+    "!src"
+  ],
+  "engines": {
+    "node": "^0.8.0"
   },
   "optionalDependencies": {
     "simple-captcha": "^0.1.10"
