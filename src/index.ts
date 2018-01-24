@@ -79,7 +79,7 @@ export interface GenericCriteria {
     field?: string
     operator?: string
     value?: any
-    [k:string]: any
+    [k: string]: any
 }
 
 export type MongoCriteria = any
@@ -102,7 +102,7 @@ export interface FindOption {
 
 export interface ListOption {
     criteria?: GenericCriteria
-    sort?: {[k:string]: number}
+    sort?: {[k: string]: number}
     includedFields?: string[]
     pageNo?: number
     pageSize?: number
@@ -206,5 +206,25 @@ export interface IConfig {
     logConfigs: any
     errorCatcher: WebErrorCatcher | null
     tuningFileDir?: string
-    preprocess: ()=>void
+    preprocess: () => void
 }
+
+
+import {
+    aCreate, aFindManyByCriteria, aFindManyByIds, aFindManyIdsByCriteria,
+    aFindOneByCriteria, aFindOneById, aGetHistoryItem, aList, aListHistory,
+    aRemoveManyByCriteria, aRestoreHistory, aUpdateManyByCriteria,
+    aUpdateOneByCriteria, aWithoutTransaction, aWithTransaction
+} from "./service/EntityService"
+
+export const Service = {
+    aCreate,
+    aFindManyByCriteria, aFindManyByIds, aFindManyIdsByCriteria,
+    aFindOneByCriteria, aFindOneById, aGetHistoryItem, aList, aListHistory,
+    aRemoveManyByCriteria, aRestoreHistory, aUpdateManyByCriteria,
+    aUpdateOneByCriteria, aWithoutTransaction, aWithTransaction
+}
+
+import {
+
+} from "./handler/EntityHandler"
