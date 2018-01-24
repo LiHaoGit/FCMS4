@@ -1,11 +1,11 @@
 // cSpell:words repo captcha fcms upsert
 
-interface KvOption {
+export interface KvOption {
     key: string,
     value: string
 }
 
-interface FieldMeta {
+export interface FieldMeta {
     system?: boolean
     name: string
     type: string
@@ -30,14 +30,15 @@ interface FieldMeta {
     textOptions?: string[]
 }
 
-interface MongoIndex {
+export interface MongoIndex {
     name: string
     fields: string
     unique?: boolean
     sparse?: boolean
     errorMessage: string
 }
-interface EntityMeta {
+
+export interface EntityMeta {
     system?: boolean
     type?: string
     _version?: number
@@ -63,15 +64,15 @@ interface EntityMeta {
     fields: {[k: string]: FieldMeta}
 }
 
-interface EntityMetaMap {
+export interface EntityMetaMap {
     [k: string]: EntityMeta
 }
 
-interface EntityValue {
+export interface EntityValue {
     [k: string]: any
 }
 
-interface GenericCriteria {
+export interface GenericCriteria {
     __type?: string
     relation?: string
     items?: any[]
@@ -81,24 +82,25 @@ interface GenericCriteria {
     [k:string]: any
 }
 
-type MongoCriteria = any
+export type MongoCriteria = any
 
-type AnyCriteria = GenericCriteria | MongoCriteria
+export type AnyCriteria = GenericCriteria | MongoCriteria
 
-interface ExecuteContext {
+export interface ExecuteContext {
+    [k: string]: any
 }
 
-interface UpdateOption {
+export interface UpdateOption {
     upsert: boolean
 }
 
-interface FindOption {
+export interface FindOption {
     includedFields?: string[]
     pageSize?: number,
     withoutTotal?: boolean
 }
 
-interface ListOption {
+export interface ListOption {
     criteria?: GenericCriteria
     sort?: {[k:string]: number}
     includedFields?: string[]
@@ -107,19 +109,19 @@ interface ListOption {
     withoutTotal?: boolean
 }
 
-type WebErrorCatcher = ()=>void
+export type WebErrorCatcher = () => void
 
-interface RouteInfo {
+export interface RouteInfo {
     urlPrefix: string
     errorCatcher?: WebErrorCatcher
     auth?: boolean
     authEntity?: string
     action?: string
     isPage?: boolean
-    [k:string]:any
+    [k: string]: any
 }
 
-interface RouteConfig {
+export interface RouteConfig {
     admin?: boolean
     auth?: boolean
     authEntity?: string
@@ -127,7 +129,7 @@ interface RouteConfig {
     isPage?: boolean
 }
 
-interface Extension {
+export interface Extension {
     aSendSecurityCodeToEmail?: (toEmail: string, code: string) => void
     aSendSecurityCodeToPhone?: (toPhone: string, code: string) => void
     aKoaMiddlewareBeforeHandler?: () => void
@@ -135,49 +137,50 @@ interface Extension {
     [k: string]: any
 }
 
-interface CreateResult {
+export interface CreateResult {
     id: any
 }
 
-type EntityPage = EntityValue[]
+export type EntityPage = EntityValue[]
 
-interface PagingListResult {
+export interface PagingListResult {
     pageNo: number
     pageSize: number
     total: number
     page: EntityPage
 }
 
-interface MongoDBConfig {
+export interface MongoDBConfig {
     name: string
     url: string
 }
-interface SSOServerClient {
+
+export interface SSOServerClient {
     acceptTokenUrl: string
     key: string
 }
 
-interface SSOServerConfig {
+export interface SSOServerConfig {
     clients: {[origin: string]: SSOServerClient}
 }
 
-interface OriginConfigItem {
+export interface OriginConfigItem {
     description?: string
     ssoServer: string
     defaultCallbackUrl: string
     ssoKey: string
 }
 
-interface OriginConfig {
+export interface OriginConfig {
     [origin: string]: OriginConfigItem
 }
 
-interface SubApp {
+export interface SubApp {
     label: string
     origins: string[]
 }
 
-interface IConfig {
+export interface IConfig {
     metaFile: string
     serverPort: number
     serverSocketTimeout: number

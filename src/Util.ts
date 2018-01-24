@@ -3,6 +3,7 @@ import * as koa from "koa"
 import _ = require("lodash")
 import mongodb = require("mongodb")
 import URL = require("url")
+import { EntityValue } from "./index"
 
 const ObjectId = mongodb.ObjectID
 

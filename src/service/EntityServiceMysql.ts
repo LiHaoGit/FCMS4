@@ -1,3 +1,6 @@
+import { EntityMeta, EntityValue, ExecuteContext, FindOption, GenericCriteria,
+    ListOption, UpdateOption } from "../index"
+
 // cSpell:words repo
 
 export async function aCreate(conn: ExecuteContext, entityMeta: EntityMeta,

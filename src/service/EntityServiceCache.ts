@@ -1,6 +1,7 @@
 import * as _ from "lodash"
 import * as mongodb from "mongodb"
 import { aGetObject, aSetObject, aUnset } from "../cache/Cache"
+import { EntityMeta, ExecuteContext } from "../index"
 import { logSystemError, logSystemInfo } from "../Log"
 
 // 缓存分两类：1、byIdCache：根据 ID 查询单个实体。2、otherCache：其他，包括根据非 ID 查询单个实体。

@@ -7,6 +7,8 @@ import Config from "./Config"
 import { SystemError } from "./Errors"
 import { extension } from "./Extension"
 import { aReadJSON, aWriteJSON } from "./FileUtil"
+import { EntityMeta, EntityMetaMap, EntityValue, FieldMeta,
+        GenericCriteria } from "./index"
 import { logSystemError, logSystemInfo } from "./Log"
 import { getMainStore, stringToObjectIdSilently } from "./storage/MongoStore"
 import { dateToLong, longToDate, stringToBoolean, stringToFloat,

@@ -4,6 +4,7 @@ import Path = require("path")
 
 import Config from "../Config"
 import { aListFilesRecursive, aReadDir, aWriteFile } from "../FileUtil"
+import { EntityMeta, FieldMeta } from "../index"
 import { logSystemDebug, logSystemInfo } from "../Log"
 import { getEntities, getEntityMeta } from "../Meta"
 import { getStore } from "../storage/MongoStore"

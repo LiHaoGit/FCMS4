@@ -8,6 +8,7 @@ import * as koa from "koa"
 import * as compose from "koa-compose"
 import * as _ from "lodash"
 
+import { RouteConfig, RouteInfo, WebErrorCatcher } from "../index"
 import { logSystemDebug } from "../Log"
 import { setIfNone } from "../Util"
 

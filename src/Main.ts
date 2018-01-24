@@ -4,6 +4,7 @@ import moment = require("moment")
 
 import Config from "./Config"
 
+import { EntityMeta, IConfig } from "./index"
 import { configLoggers, logSystemError, logSystemInfo } from "./Log"
 import * as Meta from "./Meta"
 import * as UserService from "./security/UserService"

@@ -1,22 +1,13 @@
 import * as koa from "koa"
 import Config from "../Config"
 import { Error401, Error403, UserError } from "../Errors"
+import { RouteInfo } from "../index"
 import { logSystemError } from "../Log"
 import { aAuthToken, aGetAnonymousRole,
     aRoleById } from "../security/UserService"
 import { getMyRequestHeaders , getSingedPortedCookies } from "../Util"
 
 export async function aIdentifyUser(ctx: koa.Context, next: any) {
-    // Log.debug("originalUrl", ctx.request.originalUrl)
-    // Log.debug("url", ctx.request.url)
-    // Log.debug("origin", ctx.request.origin)
-    // Log.debug("href", ctx.request.href)
-    // Log.debug("host", ctx.request.host)
-    // Log.debug("hostname", ctx.request.hostname)
-    // Log.debug("URL", ctx.request.URL)
-    // Log.debug("ip", ctx.request.ip)
-    // Log.debug("ips", ctx.request.ips)
-
     const originConfig = Config.originConfigs[ctx.request.origin]
     if (!originConfig) throw new UserError("BadOrigin",
         "BadOrigin " + ctx.request.origin)

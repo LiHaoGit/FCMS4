@@ -1,6 +1,7 @@
 // cSpell:words icts
 
 import _ = require("lodash")
+import { EntityValue, ListOption } from "../index"
 
 export type CreateInterceptor = (entityName: string, conn: any,
     instance: EntityValue, operator: any, work: () => any) => any

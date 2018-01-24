@@ -9,6 +9,7 @@ import Config from "../Config"
 import { Error401, Error403, UserError } from "../Errors"
 import { extension } from "../Extension"
 import { aControlAccess, aIdentifyUser } from "../handler/AccessController"
+import { RouteInfo } from "../index"
 import { logSystemError } from "../Log"
 import { aHandleRoute, Router } from "./Router"
 

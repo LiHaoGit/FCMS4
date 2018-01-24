@@ -5,6 +5,8 @@ import _ = require("lodash")
 
 import { aClearAllCache } from "../cache/Cache"
 import { UserError } from "../Errors"
+import { CreateResult, EntityMeta, EntityValue, FindOption, ListOption,
+    PagingListResult } from "../index"
 import { logSystemDebug } from "../Log"
 import { formatEntitiesToHttp, formatEntityToHttp, getEntityMeta, parseEntity,
     parseId, parseIds, parseListQueryValue } from "../Meta"

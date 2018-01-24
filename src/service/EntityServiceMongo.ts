@@ -4,6 +4,8 @@ import * as _ from "lodash"
 import * as mongodb from "mongodb"
 
 import { UniqueConflictError, UserError } from "../Errors"
+import { EntityMeta, EntityPage, EntityValue, FindOption, GenericCriteria,
+    ListOption, PagingListResult, UpdateOption } from "../index"
 import { logSystemWarn } from "../Log"
 import { newObjectId } from "../Meta"
 import { getInsertedIdObject, getStore, getUpdateResult,

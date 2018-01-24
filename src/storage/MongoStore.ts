@@ -1,5 +1,6 @@
 import * as mongodb from "mongodb"
 import Config from "../Config"
+import { AnyCriteria, GenericCriteria, MongoCriteria } from "../index"
 import { logSystemError, logSystemInfo } from "../Log"
 
 const MongoClient = mongodb.MongoClient

@@ -4,6 +4,9 @@ import * as _ from "lodash"
 import * as mongodb from "mongodb"
 
 import { UserError } from "../Errors"
+import { CreateResult, EntityMeta, EntityPage, EntityValue,
+    ExecuteContext, FindOption, GenericCriteria, ListOption, PagingListResult,
+    UpdateOption } from "../index"
 import { DB, getEntityMeta, parseId } from "../Meta"
 import { traceAccessService, traceQueryDB } from "../tuning/ServiceStats"
 import { objectToKeyValuePairString } from "../Util"

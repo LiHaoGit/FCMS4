@@ -1,3 +1,5 @@
+import { IConfig, OriginConfig, SSOServerClient } from "./index"
+
 function preprocess() {
     if (DEFAULT_CONFIG.sso && DEFAULT_CONFIG.subApps) {
         console.log("Preprocess config: sso & subApps")

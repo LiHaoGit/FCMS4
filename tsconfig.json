@@ -4,7 +4,7 @@
         "module": "commonjs",
         // "moduleResolution": "node",
         "declaration": true,
-        // "outDir": "./dist",
+        "outDir": "./lib",
         "noEmitOnError": true,
         "noFallthroughCasesInSwitch": true,
         "noImplicitAny": true,
@@ -13,7 +13,7 @@
         // "noUnusedParameters": true,
         "pretty": true,
         "sourceMap": true,
-        // "sourceRoot": "src",
+        "sourceRoot": "src",
         "strictNullChecks": true
     },
     "include": [
