@@ -16,8 +16,8 @@
         "sourceRoot": "src",
         "strictNullChecks": true
     },
-    "include": [
-        "src/**/*",
-        "index.d.ts"
+    "exclude": [
+        "lib",
+        "node_modules"
     ]
 }
