@@ -4,7 +4,7 @@
         "module": "commonjs",
         // "moduleResolution": "node",
         "declaration": true,
-        // "outDir": "./dist",
+        "outDir": "./lib",
         "noEmitOnError": true,
         "noFallthroughCasesInSwitch": true,
         "noImplicitAny": true,
