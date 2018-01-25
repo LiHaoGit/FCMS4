@@ -1,6 +1,9 @@
 import bunyan = require("bunyan")
 
-const loggers: {[s: string]: bunyan} = {}
+// 默认初始化日志 system error
+const loggers: {[s: string]: bunyan} = {
+    system: bunyan.createLogger({name: "system", level: "error"})
+}
 
 export function configLoggers(logConfigs: {[k: string]: bunyan.LoggerOptions}) {
     logConfigs.system = logConfigs.system || {name: "system", level: "trace"}
@@ -16,17 +19,21 @@ export function configLoggers(logConfigs: {[k: string]: bunyan.LoggerOptions}) {
 // }
 
 export function logSystemInfo(...args: any[]) {
-    loggers.system.info(...args)
+    if (loggers.system.info)
+        loggers.system.info(...args)
 }
 
 export function logSystemWarn(...args: any[]) {
-    loggers.system.warn(...args)
+    if (loggers.system.warn)
+        loggers.system.warn(...args)
 }
 
 export function logSystemError(...args: any[]) {
-    loggers.system.error(...args)
+    if (loggers.system.error)
+        loggers.system.error(...args)
 }
 
 export function logSystemDebug(...args: any[]) {
-    loggers.system.debug(...args)
+    if (loggers.system.debug)
+        loggers.system.debug(...args)
 }
