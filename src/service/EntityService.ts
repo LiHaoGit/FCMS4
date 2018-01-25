@@ -3,6 +3,7 @@
 import * as _ from "lodash"
 import * as mongodb from "mongodb"
 
+import { ExecuteContext } from "../Common"
 import { UserError } from "../Errors"
 import { DB, getEntityMeta, parseId } from "../Meta"
 import { traceAccessService, traceQueryDB } from "../tuning/ServiceStats"
@@ -177,7 +178,7 @@ export async function aList(conn: ExecuteContext, entityName: string,
         traceQueryDB(entityName, "ManyCriteria", criteriaString)
 
         return entityMeta.db === DB.mysql
-            ? MysqlServ.aList(conn, query)
+            ? MysqlServ.aList(conn, entityMeta, query)
             : MongoServ.aList(entityMeta, query)})
 }
 
