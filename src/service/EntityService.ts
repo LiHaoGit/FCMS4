@@ -6,6 +6,7 @@ import * as mongodb from "mongodb"
 import { ExecuteContext } from "../Common"
 import { UserError } from "../Errors"
 import { DB, getEntityMeta, parseId } from "../Meta"
+import { aUse } from "../storage/MySqlStore"
 import { traceAccessService, traceQueryDB } from "../tuning/ServiceStats"
 import { objectToKeyValuePairString } from "../Util"
 import { aFireEntityCreated, aFireEntityRemoved,
@@ -228,18 +229,24 @@ export async function aFindManyByIds(conn: ExecuteContext, entityName: string,
 
 export async function aWithTransaction<T>(entityMeta: EntityMeta,
     aWork: (conn: any) => T): Promise<T> {
-    // if (entityMeta.db === DB.mysql)
-    //     return Mysql.mysql.aWithTransaction(async conn => aWork(conn))
-    // else
-    return aWork({})
+
+    if (entityMeta.db === DB.mysql) {
+        const storeName = entityMeta.dbName || "main"
+        return aUse(storeName, async conn => aWork({conn}))
+    } else {
+       return aWork({})
+    }
 }
 
 export async function aWithoutTransaction<T>(entityMeta: EntityMeta,
     aWork: (conn: any) => T): Promise<T> {
-    // if (entityMeta.db === DB.mysql)
-    //     return Mysql.mysql.aWithoutTransaction(async conn => aWork(conn))
-    // else
-    return aWork({})
+
+    if (entityMeta.db === DB.mysql) {
+        const storeName = entityMeta.dbName || "main"
+        return aUse(storeName, async conn => aWork({conn}))
+    } else {
+        return aWork({})
+    }
 }
 
 // 列出历史纪录

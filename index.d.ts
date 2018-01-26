@@ -15,16 +15,12 @@ interface FieldMeta {
     persistType?: string
     sqlColM?: number
     inputType?: string
-    noCreate?: boolean
-    noEdit?: boolean
     fastSearch?: boolean
-    optionsFunc?: string
     comment?: string
-    inputFunc?: string
-    editReadonly?: boolean
-    notShow?: boolean
     fileStoreDir?: string
     showInListPage?: boolean
+    hideInCreatePage?: boolean
+    inEditPage?: string
     kvOptions?: KvOption[]
     textOptions?: string[]
 }

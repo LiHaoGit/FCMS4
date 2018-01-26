@@ -389,10 +389,10 @@ export function removeNotShownFields(entityMeta: EntityMeta, user: any,
         const fieldMeta = fields[fieldName]
         if (fieldMeta.type === "Password") {
             removedFieldNames.push(fieldName)
-        } else if (fieldMeta.notShow &&
-            !isUserOrRoleHasFieldAction(user, entityMeta.name, fieldName,
-                "show")) {
-            removedFieldNames.push(fieldName)
+        // } else if (fieldMeta.notShow &&
+        //     !isUserOrRoleHasFieldAction(user, entityMeta.name, fieldName,
+        //         "show")) {
+        //     removedFieldNames.push(fieldName)
         }
     }
 
@@ -414,7 +414,7 @@ export function removeNoCreateFields(entityMeta: EntityMeta, user: any,
     const removedFieldNames = []
     for (const fieldName in fields) {
         const fieldMeta = fields[fieldName]
-        if (fieldMeta.noCreate && !isUserOrRoleHasFieldAction(user,
+        if (fieldMeta.hideInCreatePage && !isUserOrRoleHasFieldAction(user,
             entityMeta.name, fieldName, "create")) {
             removedFieldNames.push(fieldName)
         }
@@ -435,7 +435,7 @@ export function removeNoEditFields(entityMeta: EntityMeta, user: any,
     const removedFieldNames = []
     for (const fieldName in fields) {
         const fieldMeta = fields[fieldName]
-        if ((fieldMeta.noEdit || fieldMeta.editReadonly) &&
+        if ((fieldMeta.inEditPage !== "edit") &&
             !isUserOrRoleHasFieldAction(user, entityMeta.name, fieldName,
                 "edit")) {
             removedFieldNames.push(fieldName)

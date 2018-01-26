@@ -1,11 +1,11 @@
 // cSpell:words mysqls
 
 import _ = require("lodash")
+
 import mysql = require("mysql")
 import Config from "../Config"
-import { UserError } from "../Errors"
-import { logSystemError } from "../Log"
-// import Meta from "../Meta"
+import { SystemError, UserError } from "../Errors"
+import { logSystemError, logSystemInfo } from "../Log"
 
 export interface MySQLListOptions {
     criteria: GenericCriteria
@@ -23,6 +23,7 @@ export function init() {
     if (!mysqlsConfigs) return
 
     for (const config of mysqlsConfigs) {
+        logSystemInfo("MySQL pool: " + config.name)
         const pool = mysql.createPool({
             connectionLimit: config.connectionLimit || 3,
             host: config.host,
@@ -281,7 +282,8 @@ export class EnhancedConnection {
 
         if (pageSize && pageSize > 0) {
             const no = (pageNo && pageNo >= 1) ? pageNo : 1
-            skipLimit = `SKIP ${(no - 1) * pageSize} LIMIT ${pageSize}`
+            const skip = no > 1 ? `SKIP ${(no - 1) * pageSize}` : ""
+            skipLimit = `${skip} LIMIT ${pageSize}`
         }
 
         const sql = `select ${select} `
@@ -366,7 +368,7 @@ export class EnhancedConnection {
 
         const sqlValues: any[] = []
         const inClause = buildInClause(ids, sqlValues)
-        const sql = `delete * from ${table} where _id IN ${inClause}`
+        const sql = `delete from ${table} where _id IN ${inClause}`
 
         return this.aWrite(sql, sqlValues)
     }
@@ -382,7 +384,7 @@ export class EnhancedConnection {
             throw new UserError("Deleting ALL is forbidden")
         }
 
-        const sql = `delete * from ${table} ${where}`
+        const sql = `delete from ${table} ${where}`
 
         return this.aWrite(sql, sqlValues)
     }

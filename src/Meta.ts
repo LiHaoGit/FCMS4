@@ -328,34 +328,35 @@ export function patchSystemFields(entityMeta: EntityMeta) {
         system: true, name: "_id", label: "ID", type: idType,
         required: true,
         persistType: idPersistType, sqlColM: ObjectIdStringLength,
-        inputType: "Text", noCreate: true, noEdit: true, fastSearch: true
+        inputType: "Text", hideInCreatePage: true, inEditPage: "readonly",
+        fastSearch: true
     }
     fields._version = {
         system: true, name: "_version", label: "修改版本", type: "Int",
         persistType: intPersistType, sqlColM: 12,
-        inputType: "Int", noCreate: true, noEdit: true
+        inputType: "Int", hideInCreatePage: true, inEditPage: "readonly"
     }
     fields._createdOn = {
         system: true, name: "_createdOn", label: "创建时间", type: "DateTime",
         persistType: timestampPersistType, showInListPage: true,
-        inputType: "DateTime", noCreate: true, noEdit: true
+        inputType: "DateTime", hideInCreatePage: true, inEditPage: "readonly"
     }
     fields._modifiedOn = {
         system: true, name: "_modifiedOn", label: "修改时间", type: "DateTime",
         persistType: timestampPersistType, showInListPage: true,
-        inputType: "DateTime", noCreate: true, noEdit: true
+        inputType: "DateTime", hideInCreatePage: true, inEditPage: "readonly"
     }
     fields._createdBy = {
         system: true, name: "_createdBy", label: "创建人", type: "Reference",
         refEntity: "F_User",
         persistType: userIdPersistType, sqlColM: ObjectIdStringLength,
-        inputType: "Reference", noCreate: true, noEdit: true
+        inputType: "Reference", hideInCreatePage: true, inEditPage: "readonly"
     }
     fields._modifiedBy = {
         system: true, name: "_modifiedBy", label: "修改人", type: "Reference",
         refEntity: "F_User",
         persistType: userIdPersistType, sqlColM: ObjectIdStringLength,
-        inputType: "Reference", noCreate: true, noEdit: true
+        inputType: "Reference", hideInCreatePage: true, inEditPage: "readonly"
     }
 
     return entityMeta.fields = {...entityMeta.fields, ...fields}
@@ -379,7 +380,8 @@ const SystemEntities: EntityMetaMap = {
         fields: {
             system: {
                 name: "system", label: "系统实体", type: "Boolean",
-                inputType: "Check", noCreate: true, noEdit: true
+                inputType: "Check", hideInCreatePage: true,
+                inEditPage: "readonly"
             },
             name: {
                 name: "name", label: "名称", type: "String",
@@ -462,7 +464,7 @@ const SystemEntities: EntityMetaMap = {
             system: {
                 name: "system", label: "系统字段", type: "Boolean",
                 inputType: "Check",
-                noCreate: true, noEdit: true
+                hideInCreatePage: true, inEditPage: "readonly"
             },
             name: {
                 name: "name", label: "字段名", type: "String",
@@ -499,8 +501,7 @@ const SystemEntities: EntityMetaMap = {
             },
             inputType: {
                 name: "inputType", label: "输入类型", type: "String",
-                inputType: "Select",
-                optionsFunc: "F.optionsOfInputType"
+                inputType: "Select"
             },
             inputFunc: {
                 name: "inputFunc", label: "输入构建器", type: "String",
@@ -528,8 +529,7 @@ const SystemEntities: EntityMetaMap = {
             },
             persistType: {
                 name: "persistType", label: "存储类型", type: "String",
-                inputType: "Select",
-                optionsFunc: "F.optionsOfPersistType"
+                inputType: "Select"
             },
             sqlColM: {
                 name: "sqlColM", label: "SQL列宽", type: "Int",
