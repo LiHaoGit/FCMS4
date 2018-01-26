@@ -740,16 +740,24 @@ const SystemEntities: EntityMetaMap = {
         idType: "String", name: "F_User", label: "用户", db: DB.mongo,
         dbName: "main", tableName: "F_User",
         mongoIndexes: [{
-            name: "username", fields: "username:1", unique: true, sparse: true,
+            name: "username",
+            fields: [{field: "username", order: "+"}],
+            unique: true, sparse: true,
             errorMessage: "用户名重复"
         }, {
-            name: "phone", fields: "phone:1", unique: true, sparse: true,
+            name: "phone",
+            fields: [{field: "phone", order: "+"}],
+            unique: true, sparse: true,
             errorMessage: "手机已被注册"
         }, {
-            name: "email", fields: "email:1", unique: true, sparse: true,
+            name: "email",
+            fields: [{field: "email", order: "+"}],
+            unique: true, sparse: true,
             errorMessage: "邮箱已被注册"
         }, {
-            name: "nickname", fields: "nickname:1", unique: true, sparse: true,
+            name: "nickname",
+            fields: [{field: "nickname", order: "+"}],
+            unique: true, sparse: true,
             errorMessage: "昵称已被注册"
         }],
         digestConfig: "username|nickname|phone|email",

@@ -1,4 +1,4 @@
-// cSpell:words FCMS
+// cSpell:words FCMS mysqls
 
 import moment = require("moment")
 
@@ -9,9 +9,10 @@ import * as Meta from "./Meta"
 import * as UserService from "./security/UserService"
 import * as MongoIndex from "./storage/MongoIndex"
 import * as Mongo from "./storage/MongoStore"
-// const Mysql = require("./storage/Mysql")
-// const RefactorMysqlTable = require("./storage/RefactorMysqlTable")
+import * as MySqlIndex from "./storage/MySqlIndex"
+import * as Mysql from "./storage/MySqlStore"
 import * as Redis from "./storage/RedisStore"
+import * as RefactorMysqlTable from "./storage/RefactorMysqlTable"
 import * as SystemInit from "./SystemInit"
 import { aStopPersistingTuningData,
     startPersistingTuningData } from "./tuning/ServiceStats"
@@ -43,7 +44,7 @@ export async function aStart(appConfig: IConfig,
 
         // 持久层初始化
         Mongo.init()
-        // Mysql.init()
+        Mysql.init()
 
         if (Config.cluster) await Redis.aInit()
 
@@ -53,11 +54,10 @@ export async function aStart(appConfig: IConfig,
         // 初始化数据库结构、索引
         await MongoIndex.aSyncWithMeta()
 
-        // if (Mysql.mysql) {
-        //     await RefactorMysqlTable.aSyncSchema(exports.mysql)
-        //     const MysqlIndex = require("./storage/MysqlIndex")
-        //     await MysqlIndex.aSyncWithMeta(exports.mysql)
-        // }
+        if (Config.mysqls && Config.mysqls.length) {
+            await RefactorMysqlTable.aSyncSchema()
+            await MySqlIndex.aSyncWithMeta()
+        }
 
         // 用户
         UserService.init()
@@ -101,7 +101,7 @@ async function aStop() {
     if (Config.cluster) await Redis.aDispose()
 
     await Mongo.aDispose()
-    // await Mysql.aDispose()
+    await Mysql.aDispose()
 
     logSystemInfo("ALL CLOSED!\n\n")
 }

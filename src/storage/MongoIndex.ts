@@ -5,8 +5,11 @@ import { getStore } from "./MongoStore"
 // 在执行数据库创建指定实体的元数据
 export  async function aSyncWithMeta() {
     const entities = getEntities()
-    for (const entityName in entities) {
-        if (!entities.hasOwnProperty(entityName)) continue
+    const entityNames = Object.keys(entities)
+
+    // 每个实体的索引独立事务进行操作
+
+    for (const entityName of entityNames) {
         const entityMeta = entities[entityName]
         if (entityMeta.db !== DB.mongo) continue
 
@@ -14,18 +17,16 @@ export  async function aSyncWithMeta() {
             const db = await getStore(entityMeta.dbName || "main").aDatabase()
             const tableName = entityMeta.tableName || entityMeta.name
             const c = db.collection(tableName)
-            const currentIndexes = entityMeta.mongoIndexes || []
+            const indexConfigs = entityMeta.mongoIndexes || []
             // 创建索引
-            for (const i of currentIndexes) {
-                const fieldsArray = i.fields.split(",")
+            for (const ic of indexConfigs) {
                 const fields: {[s: string]: number} = {}
-                for (const f of fieldsArray) {
-                    const fc = f.split(":")
-                    fields[fc[0]] = parseInt(fc[1], 10)
+                for (const f of ic.fields) {
+                    fields[f.field] = f.order === "+" ? 1 : -1
                 }
-                const options = {name: tableName + "_" + i.name,
-                    unique: !!i.unique,
-                    sparse: !!i.sparse
+                const options = {name: tableName + "_" + ic.name,
+                    unique: !!ic.unique,
+                    sparse: !!ic.sparse
                 }
 
                 await c.createIndex(fields, options)

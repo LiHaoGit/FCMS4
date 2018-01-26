@@ -1,5 +1,4 @@
-// cSpell:words repo captcha fcms upsert
-
+// cSpell:words repo captcha fcms upsert mysqls
 interface KvOption {
     key: string,
     value: string
@@ -30,13 +29,27 @@ interface FieldMeta {
     textOptions?: string[]
 }
 
+interface IndexField {
+    order: string
+    field: string
+}
+
 interface MongoIndex {
     name: string
-    fields: string
+    fields: IndexField[]
     unique?: boolean
     sparse?: boolean
     errorMessage: string
 }
+
+interface MySQLIndex {
+    name: string
+    fields: IndexField[]
+    unique?: boolean
+    indexType?: string
+    errorMessage: string
+}
+
 interface EntityMeta {
     system?: boolean
     type?: string
@@ -50,6 +63,7 @@ interface EntityMeta {
     tableName?: string
     noPatchSystemFields?: boolean
     mongoIndexes?: MongoIndex[]
+    mysqlIndexes?: MySQLIndex[]
     iconField?: string
     digestConfig?: string
     fieldsForDigest?: string[]
@@ -84,9 +98,6 @@ interface GenericCriteria {
 type MongoCriteria = any
 
 type AnyCriteria = GenericCriteria | MongoCriteria
-
-interface ExecuteContext {
-}
 
 interface UpdateOption {
     upsert: boolean
@@ -177,6 +188,15 @@ interface SubApp {
     origins: string[]
 }
 
+interface MySQLConfig {
+    name: string
+    host: string
+    user: string
+    password: string
+    database: string
+    connectionLimit?: number
+}
+
 interface IConfig {
     metaFile: string
     serverPort: number
@@ -190,6 +210,7 @@ interface IConfig {
     sessionExpireAtServer: number
     usernameFields: string[]
     mongoDatabases: MongoDBConfig[]
+    mysqls?: MySQLConfig[],
     redis: any
     passwordFormat: RegExp
     fileDir: string
