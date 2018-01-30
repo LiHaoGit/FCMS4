@@ -435,7 +435,9 @@ export function removeNoEditFields(entityMeta: EntityMeta, user: any,
     const removedFieldNames = []
     for (const fieldName in fields) {
         const fieldMeta = fields[fieldName]
-        if ((fieldMeta.inEditPage !== "edit") &&
+        const noEdit = fieldMeta.inEditPage === "readonly"
+            || fieldMeta.inEditPage === "hide"
+        if (noEdit &&
             !isUserOrRoleHasFieldAction(user, entityMeta.name, fieldName,
                 "edit")) {
             removedFieldNames.push(fieldName)
