@@ -2,9 +2,11 @@
 import _ = require("lodash")
 
 import { ExecuteContext } from "../Common"
-import { UniqueConflictError } from "../Errors"
+import { SystemError, UniqueConflictError } from "../Errors"
 import { newObjectId } from "../Meta"
+import { stringToObjectIdSilently } from "../storage/MongoStore"
 import { isIndexConflictError } from "../storage/MySqlStore"
+import { jsObjectToTypedJSON, typedJSONToJsObject } from "../Util"
 
 function toDupKeyError(e: any, entityMeta: EntityMeta) {
     const matches = e.message.match(/Duplicate entry '(.*)' for key '(.+)'$/)
@@ -29,6 +31,8 @@ export async function aCreate(ctx: ExecuteContext, entityMeta: EntityMeta,
 
     if (!_.size(instance)) return null
 
+    instance = entityToSqlObject(instance, entityMeta)
+
     const id = newObjectId().toString()
     instance._id = id
 
@@ -49,6 +53,9 @@ export async function aUpdateManyByCriteria(ctx: ExecuteContext,
     if (!conn) throw new Error("No connection")
 
     if (!_.size(instance)) return null
+
+    instance = entityToSqlObject(instance, entityMeta)
+
     try {
         const tableName = entityMeta.tableName || entityMeta.name
         const r = await conn.aUpdateByObject(tableName, criteria, instance)
@@ -70,6 +77,9 @@ export async function aUpdateOneByCriteria(ctx: ExecuteContext,
     if (!conn) throw new Error("No connection")
 
     if (!_.size(instance)) return null
+
+    instance = entityToSqlObject(instance, entityMeta)
+
     try {
         const tableName = entityMeta.tableName || entityMeta.name
         const r = await conn.aUpdateByObject(tableName, criteria, instance)
@@ -101,7 +111,10 @@ export async function aFindOneByCriteria(ctx: ExecuteContext,
     const includedFields = getFinalIncludedFields(entityMeta,
         o && o.includedFields || [])
 
-    return conn.aFindOneByCriteria(table, criteria, includedFields)
+    const instance = await conn.aFindOneByCriteria(table, criteria,
+        includedFields)
+    return sqlObjectToEntity(instance, entityMeta)
+
 }
 
 // sort 为 mongo 原生格式
@@ -120,7 +133,9 @@ export async function aList(ctx: ExecuteContext, entityMeta: EntityMeta,
     const query = {criteria: criteria || {}, includedFields, sort,
         pageNo, pageSize, paging: !withoutTotal}
 
-    return conn.aFind(table, query)
+    const r = await conn.aFind(table, query)
+    r.page = r.page.map((e: any) => sqlObjectToEntity(e, entityMeta))
+    return r
 }
 
 // 从某个历史纪录中恢复
@@ -153,7 +168,8 @@ export async function aGetHistoryItem(ctx: ExecuteContext,
     const historyTable = table + "_history"
 
     // 历史表的 ID 一律是 ObjectId
-    return conn.aFindOneByCriteria(historyTable, {_id: id})
+    const instance = await conn.aFindOneByCriteria(historyTable, {_id: id})
+    return sqlObjectToEntity(instance, entityMeta)
 }
 
 // 列出历史纪录
@@ -170,7 +186,8 @@ export async function aListHistory(ctx: ExecuteContext,
 
     // 不分页
     const query = {criteria, includedFields, pageSize: -1, paging: false}
-    return conn.aFind(historyTable, query)
+    const entities = await conn.aFind(historyTable, query)
+    return entities.map((e: any) => sqlObjectToEntity(e, entityMeta))
 }
 
 function getFinalIncludedFields(entityMeta: EntityMeta,
@@ -193,5 +210,67 @@ function getFinalIncludedFields(entityMeta: EntityMeta,
         return _.difference(allFields, excluded)
     } else {
         return included
+    }
+}
+
+export function sqlObjectToEntity(entityInput: EntityValue,
+    entityMeta: EntityMeta) {
+
+    if (!entityInput) return entityInput
+    if (!_.isObject(entityInput)) return undefined
+    const entityValue: EntityValue = {}
+    const fields = entityMeta.fields
+    Object.keys(fields).forEach(fName => {
+        const fMeta = fields[fName]
+        const fv = sqlValueToField(entityInput[fName], fMeta)
+        // undefined / NaN 去掉，null 保留！
+        if (!(_.isUndefined(fv) || _.isNaN(fv))) entityValue[fName] = fv
+    })
+
+    return entityValue
+}
+
+export function sqlValueToField(value: any, fieldMeta?: FieldMeta): any {
+    if (!fieldMeta) throw new SystemError("NoFieldMeta", "")
+    // null / undefined 语义不同
+    if (_.isNil(value)) return value // null/undefined 原样返回
+
+    // for 循环放在 if 内为提高效率
+    if (fieldMeta.type === "ObjectId") {
+        return stringToObjectIdSilently(value)
+    } else if (fieldMeta.type === "Reference") {
+        return value // 原样返回
+    } else if (fieldMeta.type === "Boolean") {
+        return value // 原样返回
+    } else if (fieldMeta.type === "Component") {
+        return typedJSONToJsObject(value)
+    } else {
+        return value
+    }
+}
+
+export function entityToSqlObject(entityValue: EntityValue,
+    entityMeta: EntityMeta) {
+
+    const output: EntityValue = {}
+
+    for (const fName in entityMeta.fields) {
+        const fieldMeta = entityMeta.fields[fName]
+        const o = fieldToSqlValue(entityValue[fName], fieldMeta)
+        if (!_.isUndefined(o)) output[fName] = o
+    }
+
+    return output
+}
+
+export function fieldToSqlValue(fieldValue: any, fieldMeta: FieldMeta): any {
+    if (!fieldValue) return fieldValue
+
+    const type = fieldMeta.type
+    if (type === "Component" || type === "Object" || type === "Image"
+        || type === "File") {
+        return jsObjectToTypedJSON(fieldValue)
+    } else {
+        return fieldValue
     }
 }

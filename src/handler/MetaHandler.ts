@@ -58,9 +58,15 @@ export async function aRemoveMeta(ctx: koa.Context) {
 }
 
 export async function aGetEmptyEntityMeta(ctx: koa.Context) {
-    const e = {name: "", label: "", fields: {}, db: DB.mongo}
-    patchSystemFields(e)
-    ctx.body = e
+    const db = ctx.query.db
+    if (db === DB.mongo || db === DB.mysql) {
+        const e = {name: "", label: "", fields: {}, db}
+        patchSystemFields(e)
+        ctx.body = e
+    } else {
+        ctx.body = {}
+    }
+
 }
 
 export async function aGetActions(ctx: koa.Context) {

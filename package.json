@@ -1,6 +1,6 @@
 {
   "name": "fcms4",
-  "version": "1.1.8",
+  "version": "1.2.0",
   "typings": "./index.d.ts",
   "dependencies": {
     "@types/bluebird": "^3.5.18",
